@@ -1,0 +1,12 @@
+.header{
+  background-color: #2ecc71;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.header__img{
+  max-height: 2.7rem;
+  cursor: pointer;
+}
