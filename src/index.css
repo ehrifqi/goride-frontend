@@ -2,4 +2,26 @@ body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
+  font-size: 1.5rem;
+}
+
+.title--center{
+  position: relative;
+  text-align: center;
+  color: black
+}
+
+.title--center:after{
+  content: '';
+  display: block;
+  width: 8rem;
+  height: 8px;
+  margin-top: 1rem;
+  margin: 1rem auto;
+  background: #95a5a6;
+}
+
+.paragraph{
+  line-height: 1.5;
+  letter-spacing: 1.5px;
 }
