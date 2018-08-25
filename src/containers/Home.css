@@ -1,0 +1,61 @@
+.banner{
+  width: 100vw;
+  height: 100vh;
+  background-size: cover;
+  background-image: url("../assets/img/gojek-banner2.jpg"), linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.5));
+  position: relative;
+}
+
+.banner__text{
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0;
+  width: 100%;
+}
+
+.banner__paragraph{
+  font-size: 4rem;
+  color: white;
+  line-height: 1.3;
+  letter-spacing: 2px;
+  text-align: justify;
+  text-transform: uppercase;
+  background-color: rgba(0,0,0, .4);
+  text-align: center;
+  font-weight: 100;
+  margin: 0;
+  padding: .3rem .3rem;
+}
+
+.aboutus{
+  margin-top: 8rem;
+}
+
+.aboutus__img{
+  max-width: 50%;
+}
+
+.aboutus__panel{
+  display: flex;
+  padding: 2rem 4rem;
+}
+
+.aboutus__text-panel{
+  padding-left: 2.5rem;
+  padding-right: 4rem;
+}
+
+.section-btn{
+  text-align: center;
+  margin: 5rem 0;
+}
+
+.btn-login{
+  font-size: 1.5rem !important;
+}
+
+.btn-register{
+  font-size: 1.5rem !important;
+}
