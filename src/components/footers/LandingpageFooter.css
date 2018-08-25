@@ -1,0 +1,24 @@
+.footer{
+  background-color: #95a5a6;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-content: center;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.footer__img{
+  max-height: 2.7rem;
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;
+}
+
+.footer__title{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
