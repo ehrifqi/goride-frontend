@@ -17,7 +17,8 @@ class Banner extends Component {
     super(props);
 
     this.state = {
-      text: ''
+      text: '',
+      interval: undefined
     }
   }
 
@@ -34,6 +35,7 @@ class Banner extends Component {
       this.setState({ ...this.state, text: this.state.text += textArr[currentIndex] })
       currentIndex += 1;
     }, INTERVAL)
+    this.setState({ ...this.state, interval: interval });
   }
 
   render() {
@@ -47,6 +49,11 @@ class Banner extends Component {
 
   componentDidMount() {
     this.mapTextToBanner();
+  }
+
+  componentWillUnmount() {
+    if (this.state.interval !== undefined)
+      clearInterval(this.state.interval);
   }
 }
 
