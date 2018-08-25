@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
+import {signInMember} from '../../store/actions/auth';
+import {connect} from 'react-redux'
 
 import './CustomerLoginForm.css';
 class CustomerLoginForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
+      email: '',
       password: ''
     }
   }
@@ -17,6 +19,16 @@ class CustomerLoginForm extends Component {
 
   onLogin = (event) => {
     event.preventDefault();
+    this.props.signInMember({
+      email: this.state.email,
+      password: this.state.password
+    })
+    .then(res => {
+
+    })
+    .catch(err => {
+      
+    });
   }
 
   render() {
@@ -25,8 +37,8 @@ class CustomerLoginForm extends Component {
         <div className="form__container">
           <h1 className="title--center">Customer Login</h1>
           <div className="form-group row justify-content-md-center">
-            <label className="col-sm-1">Username</label>
-            <input type="text" name="username" placeholder="Username" className="col-sm-4 form-control" onChange={this.onInputChange} />
+            <label className="col-sm-1">Email</label>
+            <input type="text" name="email" placeholder="Email" className="col-sm-4 form-control" onChange={this.onInputChange} />
           </div>
           <div className="form-group row justify-content-md-center">
             <label className="col-sm-1">Password</label>
@@ -41,4 +53,4 @@ class CustomerLoginForm extends Component {
   }
 }
 
-export default CustomerLoginForm;
+export default connect(null, {signInMember})(CustomerLoginForm);
