@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from '../logo.svg';
 import { BrowserRouter as Router, withRouter } from 'react-router-dom';
 import AppRoute from './AppRoute';
 import { configureStore } from '../store'
