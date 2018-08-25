@@ -32,7 +32,7 @@ class Banner extends Component {
     const interval = setInterval(() => {
       if (currentIndex === textArr.length - 1)
         clearInterval(interval);
-      this.setState({ ...this.state, text: this.state.text += textArr[currentIndex] })
+      this.setState({ ...this.state, text: this.state.text + textArr[currentIndex] })
       currentIndex += 1;
     }, INTERVAL)
     this.setState({ ...this.state, interval: interval });
