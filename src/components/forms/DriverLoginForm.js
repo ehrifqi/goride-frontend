@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 
-import './CustomerLoginForm.css';
-class CustomerLoginForm extends Component {
+import './DriverLoginForm.css';
+class DriverLoginForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,7 +23,7 @@ class CustomerLoginForm extends Component {
     return (
       <form>
         <div className="form__container">
-          <h1 className="title--center">Customer Login</h1>
+          <h1 className="title--center">Driver Login</h1>
           <div className="form-group row justify-content-md-center">
             <label className="col-sm-1">Username</label>
             <input type="text" name="username" placeholder="Username" className="col-sm-4 form-control" onChange={this.onInputChange} />
@@ -41,4 +41,4 @@ class CustomerLoginForm extends Component {
   }
 }
 
-export default CustomerLoginForm;
+export default DriverLoginForm;

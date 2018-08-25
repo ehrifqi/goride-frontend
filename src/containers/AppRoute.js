@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import Home from './Home';
 import Login from './Login';
 import CustomerLogin from './CustomerLogin';
+import DriverLogin from './DriverLogin';
 
 const AppRoute = props => {
   return (
@@ -14,6 +15,7 @@ const AppRoute = props => {
               <Route exact path="/" render={props => <Home {...props} />} />
               <Route exact path="/login" render={props => <Login {...props} />} />
               <Route exact path="/login/customer" render={props => <CustomerLogin {...props} />} />
+              <Route exact path="/login/driver" render={props => <DriverLogin {...props} />} />
           </Switch>
       </div>
   )

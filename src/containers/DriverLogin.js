@@ -2,22 +2,22 @@ import React, { Component } from 'react'
 
 import LandingpageHeader from './../components/headers/LandingpageHeader';
 import LandingpageFooter from './../components/footers/LandingpageFooter';
-import CustomerLoginForm from './../components/forms/CustomerLoginForm.js';
+import DriverLoginForm from './../components/forms/DriverLoginForm.js';
 
-class CustomerLogin extends Component{
+class DriverLogin extends Component{
   constructor(props){
     super(props);
   }
-
+  
   render(){
     return (
       <React.Fragment>
         <LandingpageHeader />
-        <CustomerLoginForm />
+        <DriverLoginForm />
         <LandingpageFooter />
       </React.Fragment>
     )
   }
 }
 
-export default CustomerLogin;
+export default DriverLogin;
