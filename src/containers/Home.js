@@ -72,7 +72,7 @@ class Home extends Component {
 
   render() {
     return (
-      <React.Fragment>
+      <div className="body">
         <LandingpageHeader />
         <Banner />
         <section id="about-gojek" className="aboutus">
@@ -83,13 +83,16 @@ class Home extends Component {
               <p className="paragraph">Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem obcaecati sapiente suscipit quibusdam animi inventore modi. Sint vero blanditiis vitae modi, maxime ex nihil hic id consequuntur, temporibus voluptatem reprehenderit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto voluptatibus sapiente vel fuga optio qui ut ad voluptas facere architecto laborum quibusdam earum est, error, fugiat tempore inventore aspernatur enim.</p>
             </div>
           </div>
-        </section>
+        </section>;
         <section className="section-btn">
-          <button className="ui positive button btn-login" onClick={this.redirectToLoginPage}>Login</button>
-          <button className="ui orange button btn-register" onClick={this.redirectToRegisterPage}>Register</button>
+          <div>
+            <button className="ui positive button btn-login" onClick={this.redirectToLoginPage}>Login</button>
+            <button className="ui orange button btn-register" onClick={this.redirectToRegisterPage}>Register</button>
+            <br style={{ clear: 'both', display: 'table' }} />
+          </div>
         </section>
         <LandingpageFooter />
-      </React.Fragment>
+      </div>
     )
   }
 }
