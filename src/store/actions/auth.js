@@ -29,3 +29,20 @@ export function signInMember(data){
     })
   }
 }
+
+export function signInDriver(data){
+  return dispatch => {
+    return new Promise((resolve, reject) => {
+      // const member = store.getState()["currentUser"];
+      return apiCall('post', `/auth/drivers_auth/login`, data)
+        .then(user => {
+          localStorage.setItem('token', user.token.access_token);
+          dispatch(setCurrentUser(user, true));
+          resolve(user);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    })
+  }
+}

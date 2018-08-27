@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
+import { signInDriver } from '../../store/actions/auth'
+import { connect } from 'react-redux';
 
 import './DriverLoginForm.css';
 class DriverLoginForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
+      email: '',
       password: ''
     }
   }
@@ -17,6 +19,10 @@ class DriverLoginForm extends Component {
 
   onLogin = (event) => {
     event.preventDefault();
+    this.props.signInDriver({
+      email: this.state.email,
+      password: this.state.password
+    })
   }
 
   render() {
@@ -25,8 +31,8 @@ class DriverLoginForm extends Component {
         <div className="form__container">
           <h1 className="title--center">Driver Login</h1>
           <div className="form-group row justify-content-md-center">
-            <label className="col-sm-1">Username</label>
-            <input type="text" name="username" placeholder="Username" className="col-sm-4 form-control" onChange={this.onInputChange} />
+            <label className="col-sm-1">Email</label>
+            <input type="text" name="email" placeholder="Email" className="col-sm-4 form-control" onChange={this.onInputChange} />
           </div>
           <div className="form-group row justify-content-md-center">
             <label className="col-sm-1">Password</label>
@@ -41,4 +47,4 @@ class DriverLoginForm extends Component {
   }
 }
 
-export default DriverLoginForm;
+export default connect(null, {signInDriver})(DriverLoginForm);
