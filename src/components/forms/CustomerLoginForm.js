@@ -4,7 +4,7 @@ import { signInMember } from '../../store/actions/auth';
 import { connect } from 'react-redux'
 import { addError, removeError } from '../../store/actions/error'
 
-import './CustomerLoginForm.css';
+import './Form.css';
 class CustomerLoginForm extends Component {
   constructor(props) {
     super(props);
