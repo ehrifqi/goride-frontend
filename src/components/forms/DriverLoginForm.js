@@ -21,7 +21,7 @@ class DriverLoginForm extends Component {
   }
 
   onLogin = (event) => {
-    this.setState({...this.state, loading: true});
+    this.setState({ ...this.state, loading: true });
     event.preventDefault();
     this.props.signInDriver({
       email: this.state.email,
@@ -34,7 +34,7 @@ class DriverLoginForm extends Component {
         this.props.addError(err.data.message);
       })
       .finally(() => {
-        this.setState({...this.state, loading: false});
+        this.setState({ ...this.state, loading: false });
       });
   }
 
@@ -48,9 +48,9 @@ class DriverLoginForm extends Component {
           <h1 className="title--center">Driver Login</h1>
           <div>
             {error.message && (
-             <div className="alert alert-danger col-sm-5 error-box error-box--center" role="alert">
-              <p>{error.message}</p>
-            </div>)}
+              <div className="alert alert-danger col-sm-5 error-box error-box--center" role="alert">
+                <p>{error.message}</p>
+              </div>)}
           </div>
           <div className="form-group row justify-content-md-center">
             <label className="col-sm-1">Email</label>
