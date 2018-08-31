@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { signInMember } from '../../store/actions/auth';
 import { connect } from 'react-redux'
@@ -28,13 +29,12 @@ class CustomerLoginForm extends Component {
       password: this.state.password
     })
       .then(res => {
-
+        this.setState({ ...this.state, loading: false });
+        this.props.history.push('/customer')
       })
       .catch(err => {
-        this.props.addError(err.data.message);
-      })
-      .finally(() => {
         this.setState({ ...this.state, loading: false });
+        this.props.addError(err.data.message);
       });
   }
 
@@ -76,4 +76,4 @@ function mapStateToProps(reduxState) {
   }
 }
 
-export default connect(mapStateToProps, { signInMember, addError, removeError })(CustomerLoginForm);
+export default withRouter(connect(mapStateToProps, { signInMember, addError, removeError })(CustomerLoginForm));

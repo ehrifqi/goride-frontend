@@ -32,13 +32,12 @@ class CustomerRegisForm extends Component {
       phone_number: this.state.phoneNumber
     })
       .then(res => {
-
+        this.setState({ ...this.state, loading: false });
+        this.props.history.push('/customer')
       })
       .catch(err => {
-        this.props.addError(err.data.message);
-      })
-      .finally(() => {
         this.setState({ ...this.state, loading: false });
+        this.props.addError(err.data.message);
       });
   }
 

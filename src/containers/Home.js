@@ -83,7 +83,7 @@ class Home extends Component {
               <p className="paragraph">Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem obcaecati sapiente suscipit quibusdam animi inventore modi. Sint vero blanditiis vitae modi, maxime ex nihil hic id consequuntur, temporibus voluptatem reprehenderit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto voluptatibus sapiente vel fuga optio qui ut ad voluptas facere architecto laborum quibusdam earum est, error, fugiat tempore inventore aspernatur enim.</p>
             </div>
           </div>
-        </section>;
+        </section>
         <section className="section-btn">
           <div>
             <button className="ui positive button btn-login" onClick={this.redirectToLoginPage}>Login</button>
