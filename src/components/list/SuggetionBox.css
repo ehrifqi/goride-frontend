@@ -1,0 +1,14 @@
+.list{
+  background-color: white;
+  border-radius: 2px;
+  border: 1px solid gray;
+  min-width: 30rem;
+  max-width: 35rem;
+  max-height: 15rem;
+  overflow-y: scroll;
+}
+
+.item{
+  padding: .4rem !important;
+  cursor: pointer;
+}
