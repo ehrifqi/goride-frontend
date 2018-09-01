@@ -14,7 +14,7 @@ class CustomerRoute extends Component {
     return (
       <div id="router">
         <Switch>
-          <Route path={`${match.url}`} component={withAuth(OrderPanel)} />
+          <Route exact path={`${match.url}`} component={withAuth(OrderPanel)} />
         </Switch>
       </div>
     )
