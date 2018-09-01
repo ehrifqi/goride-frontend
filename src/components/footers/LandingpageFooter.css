@@ -7,6 +7,9 @@
   align-content: center;
   align-items: center;
   padding: 8px 0;
+}
+
+.footer--absolute{
   position: absolute;
   right: 0;
   bottom: 0;
