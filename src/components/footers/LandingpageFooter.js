@@ -13,7 +13,7 @@ const LandingpageFooter = props => {
         <span>Powered by </span>
         <img src={gojekLogo} alt="goride logo" className="footer__img" />
       </div>
-      <p>Copyright 2018</p>
+      <p>© Copyright 2018</p>
     </footer>
   )
 }
