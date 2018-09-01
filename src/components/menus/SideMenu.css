@@ -1,0 +1,26 @@
+.sidemenu{
+  display: flex;
+  width: 15rem;
+  flex-direction: column;
+  padding: 0 0 1rem 1rem;
+  border-right: 1px solid darkgray;
+  font-size: .9em;
+}
+
+.sidemenu > .item{
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  cursor: pointer;
+  font-family: 'lato', sans-serif;
+  padding-right: 2rem;
+  display: block;
+}
+
+.sidemenu > .item.active{
+  font-weight: 700;
+  border-right: 2px solid black;
+}
+
+.sidemenu > .first-bottom{
+  margin-top: auto;
+}
