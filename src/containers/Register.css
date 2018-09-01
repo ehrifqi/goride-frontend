@@ -2,14 +2,18 @@
   margin-top: 5rem;
 }
 
+.register-title{
+  text-align: center;
+}
+
 .register__panel{
   display: flex;
   justify-content: center;
 }
 
 .register-div{
-  width: 40rem;
-  height: 40rem;
+  width: 27rem;
+  height: 27rem;
   margin-top: 2rem;
   position: relative;
   color: white;
@@ -17,11 +21,11 @@
 
 .register-div a{
   position: absolute;
-  bottom: 40%;
+  bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
   display: inline-block;
-  padding: 2rem;
+  padding: 1rem;
   background-color: rgba(0,0,0, .5);
   color: white;
   cursor: pointer;
@@ -31,7 +35,7 @@
   background-image: url("../assets/img/login-as-driver.jpg");
   background-size: 100%;
   background-repeat: no-repeat;
-  margin-right: 50px;
+  margin-right: 70px;
 }
 
 .register-customer{

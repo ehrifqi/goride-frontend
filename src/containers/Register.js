@@ -20,12 +20,15 @@ const Register = props => {
       <LandingpageHeader />
       <section className="section-login">
 
+        <div className="register-title">
+          <h2>Register As</h2>
+        </div>
         <div className="register__panel">
           <div className="register-div register-driver">
-            <a onClick={redirectToDriverRegistration}>Register as driver</a>
+            <a onClick={redirectToDriverRegistration}>Driver</a>
           </div>
           <div className="register-div register-customer">
-            <a onClick={redirectToCustomerRegistration}>Register as customer</a>
+            <a onClick={redirectToCustomerRegistration}>Customer</a>
           </div>
         </div>
       </section>

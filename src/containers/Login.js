@@ -23,12 +23,15 @@ const Login = props => {
       <LandingpageHeader />
       <section className="section-login">
 
+        <div className="login-title">
+          <h2>Login As</h2>
+        </div>
         <div className="login__panel">
           <div className="login-div login-driver">
-            <a onClick={redirectToDriverLogin}>Login as driver</a>
+            <a onClick={redirectToDriverLogin}>Driver</a>
           </div>
           <div className="login-div login-customer">
-            <a onClick={redirectToCustomerLogin}>Login as customer</a>
+            <a onClick={redirectToCustomerLogin}>Customer</a>
           </div>
         </div>
       </section>
