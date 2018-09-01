@@ -5,12 +5,12 @@ import './SuggetionBox.css';
 
 const SuggestionBox = props => {
   const mapSuggestionsToBox = () => {
-    const { suggestions } = props;
+    const { suggestions, onItemClick } = props;
 
     if (suggestions !== undefined) {
       return suggestions.map(suggestion => {
         return (
-          <div className="item" key={suggestion.id}>
+          <div className="item" key={suggestion.id} onClick={() => onItemClick(suggestion.id)}>
             <i className={`large ${props.iconClass} middle aligned icon`}></i>
             <div className="content">
               <a className="header">{suggestion.header}</a>
@@ -38,7 +38,8 @@ const SuggestionBox = props => {
 
 SuggestionBox.propTypes = {
   suggestions: PropTypes.array,
-  iconClass: PropTypes.string.isRequired 
+  iconClass: PropTypes.string.isRequired,
+  onItemClick: PropTypes.func.isRequired
   //[{header, description, id}]
 }
 
