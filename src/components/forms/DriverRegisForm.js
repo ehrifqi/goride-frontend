@@ -77,7 +77,7 @@ class DriverRegisForm extends Component {
             <input type="password" name="password" placeholder="Password" className="col-sm-4 form-control" onChange={this.onInputChange} />
           </div>
           <div className="form-group row justify-content-md-center">
-            <label className="col-sm-2">Full Name</label>
+            <label className="col-sm-2">Full name</label>
             <input type="text" name="fullname" placeholder="Full name" className="col-sm-4 form-control" onChange={this.onInputChange} />
           </div>
           <div className="form-group row justify-content-md-center">
@@ -89,7 +89,7 @@ class DriverRegisForm extends Component {
             <input type="text" name="phoneNumber" placeholder="Phone number" className="col-sm-4 form-control" onChange={this.onInputChange} />
           </div>
           <div className="form-group row justify-content-md-center">
-            <label className="col-sm-2">License Plate</label>
+            <label className="col-sm-2">License plate</label>
             <input type="text" name="licensePlate" placeholder="License plate" className="col-sm-4 form-control" onChange={this.onInputChange} />
           </div>
           <div className="form-group row justify-content-md-center">

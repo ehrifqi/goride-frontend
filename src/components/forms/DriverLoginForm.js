@@ -53,11 +53,11 @@ class DriverLoginForm extends Component {
               </div>)}
           </div>
           <div className="form-group row justify-content-md-center">
-            <label className="col-sm-1">Email</label>
+            <label className="col-sm-2">Email</label>
             <input type="text" name="email" placeholder="Email" className="col-sm-4 form-control" onChange={this.onInputChange} />
           </div>
           <div className="form-group row justify-content-md-center">
-            <label className="col-sm-1">Password</label>
+            <label className="col-sm-2">Password</label>
             <input type="password" name="password" placeholder="Password" className="col-sm-4 form-control" onChange={this.onInputChange} />
           </div>
           <div className="row justify-content-md-center">
