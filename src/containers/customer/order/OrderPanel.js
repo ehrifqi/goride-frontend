@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import gorideDriverMarker from './../../../assets/img/markers/goride-driver-marker.png'
 import gorideCustomerMarker from './../../../assets/img/markers/goride-customer-marker.png'
 import { apiCall } from '../../../services/api'
+import {
+  trackLocation, getCurrentPosition, clearLocationTrack, getMapOptions, createMarker, position, clearMarkersFromMap
+} from '../../../services/map'
 
 import MapInputs from './MapInputs'
 
@@ -37,7 +40,19 @@ class OrderPanel extends Component {
       isToFocus: false,
       callPlaceApiTimer: undefined,
       fromSuggestions: undefined,
-      toSuggestions: undefined
+      toSuggestions: undefined,
+
+      // Map Tracker
+      trackLocationId: undefined,
+
+      // MemberMap
+      memberLat: undefined,
+      memberLng: undefined,
+      memberMarker: undefined,
+
+      // DriverMap
+      driverLat: undefined,
+      driverLng: undefined
     }
   }
 
@@ -176,20 +191,48 @@ class OrderPanel extends Component {
     )
   }
 
-  componentDidMount() {
-    const { srcLat, srcLng, dstLat, dstLng } = this.state;
-    var myCenter = new google.maps.LatLng(37.441888, -122.144886);
-    var mapCanvas = document.getElementById("googleMap");
-    var mapOptions = { center: myCenter, zoom: 16 };
-    var myCenter = new google.maps.LatLng(srcLat, srcLng);
-    const map = new google.maps.Map(mapCanvas, mapOptions);
+  updateMemberPosition = (lat, lng) => {
+    const { map } = this.state;
+    map.setCenter(new google.maps.LatLng(lat, lng));
     this.setState({
-      ...this.state, map: map, directionsDisplay: new google.maps.DirectionsRenderer({
-        map: map,
-        suppressMarkers: true
-      })
+      ...this.state,
+      memberLat: lat,
+      memberLng: lng
     });
+
+    createMarker(lat, lng, map, gorideCustomerMarker, "Member");
+  }
+
+  componentDidMount() {
+    // GETS MEMBER INITIAL POSITION, ON SUCCESS -> STARTS TRACKING
+    getCurrentPosition((pos) => {
+      const mapCanvas = document.getElementById("googleMap");
+      const mapOptions = getMapOptions(pos.coords.latitude, pos.coords.longitude);
+      const map = new google.maps.Map(mapCanvas, mapOptions);
+      const trackLocationId = trackLocation(({ coords: { latitude: lat, longitude: lng } }) => {
+        this.updateMemberPosition(lat, lng)
+      }
+      );
+      this.setState({
+        ...this.state,
+        map: map,
+        trackLocationId: trackLocationId,
+        directionsDisplay: new google.maps.DirectionsRenderer({
+          map: map,
+          suppressMarkers: true
+        })
+      });
+      this.updateMemberPosition(pos.coords.latitude, pos.coords.longitude)
+    });
+    const { srcLat, srcLng, dstLat, dstLng } = this.state;
     this.mapLocation(srcLat, srcLng, dstLat, dstLng);
+  }
+
+  componentWillUnmount() {
+    const { trackLocationId } = this.state;
+
+    if(trackLocationId)
+      clearLocationTrack(this.state.trackLocationId)
   }
 }
 
