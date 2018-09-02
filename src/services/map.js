@@ -1,4 +1,5 @@
 const google = window.google;
+const geocoder = new google.maps.Geocoder;
 
 exports.getCurrentPosition = (onSuccess, onError = () => { }) => {
   if ('geolocation' in navigator === false) {
@@ -61,8 +62,18 @@ exports.getDistanceInMeter = (srcLat, srcLng, dstLat, dstLng, avoidTolls, avoidH
     if (status == google.maps.DirectionsStatus.OK) {
       cb(response.routes[0].legs[0].distance.value);
     }
-    else{
+    else {
       return undefined;
     }
   });
+}
+
+exports.geocodeLatLng = (latLng, cb) => {
+  geocoder.geocode({ 'location': latLng }, function (results, status) {
+    if (status === 'OK') {
+      if (results[0]) {
+        cb(results[0].place_id, results[0].formatted_address,results[0].geometry.location.lat(), results[0].geometry.location.lng())
+      }
+    }
+  })
 }
