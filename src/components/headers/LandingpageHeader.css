@@ -1,9 +1,10 @@
 header.header{
-  background-color: #37BF43;
+  background-color: #ecf0f1;
   width: 100%;
   display: flex;
   justify-content: center;
   padding: 15px 0;
+  box-shadow: .1rem .1rem .2rem rgba(0,0,0,.5);
 }
 
 .header__img{
