@@ -46,7 +46,7 @@ export function signInDriver(data) {
       return apiCall("post", `/auth/drivers_auth/login`, data)
         .then(user => {
           localStorage.setItem("token", user.token.access_token);
-          dispatch(setCurrentUser(user, true));
+          dispatch(setCurrentUser(user.driver, user.token.access_token, true));
           resolve(user);
         })
         .catch(err => {
@@ -63,7 +63,7 @@ export function registerMember(data) {
       return apiCall("post", `/auth/members_auth/register`, data)
         .then(user => {
           localStorage.setItem("token", user.token.access_token);
-          dispatch(setCurrentUser(user, true));
+          dispatch(setCurrentUser(user.member, user.token.access_token, true));
           resolve(user);
         })
         .catch(err => {
@@ -80,7 +80,7 @@ export function registerDriver(data) {
       return apiCall("post", `/auth/drivers_auth/register`, data)
         .then(user => {
           localStorage.setItem("token", user.token.access_token);
-          dispatch(setCurrentUser(user, true));
+          dispatch(setCurrentUser(user.driver, user.token.access_token, true));
           resolve(user);
         })
         .catch(err => {
