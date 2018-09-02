@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import gorideDriverMarker from "./../../../assets/img/markers/goride-driver-marker.png";
 import gorideCustomerMarker from "./../../../assets/img/markers/goride-customer-marker.png";
+import redMarker from "./../../../assets/img/markers/red-marker.png";
+import greenMarker from "./../../../assets/img/markers/green-marker.png";
 import { apiCall } from "../../../services/api";
 import {
   trackLocation,
@@ -11,7 +13,8 @@ import {
   position,
   clearMarkersFromMap,
   getDistanceInMeter,
-  geocodeLatLng
+  geocodeLatLng,
+  mapLocation
 } from "../../../services/map";
 
 import MapInputs from "./MapInputs";
@@ -133,7 +136,7 @@ class OrderPanel extends Component {
   };
 
   updateOrderDetails = () => {
-    const { srcLat, srcLng, dstLat, dstLng, map } = this.state;
+    const { srcLat, srcLng, dstLat, dstLng, map, directionsDisplay } = this.state;
     if (srcLat && srcLng && dstLat && dstLng) {
       getDistanceInMeter(srcLat, srcLng, dstLat, dstLng, true, true, distance => {
         apiCall("get", `/map/get_price?distance=${distance / 1000}`)
@@ -153,69 +156,12 @@ class OrderPanel extends Component {
     clearMarkersFromMap(this.state.orderMarkers,
       () => {
         const markers = []
-        createMarker(srcLat, srcLng, map, gorideCustomerMarker, "Member", (marker) => markers.push(marker));
-        createMarker(dstLat, dstLng, map, gorideCustomerMarker, "Member", (marker) => markers.push(marker));
+        createMarker(srcLat, srcLng, map, redMarker, "Member", (marker) => markers.push(marker));
+        createMarker(dstLat, dstLng, map, greenMarker, "Member", (marker) => markers.push(marker));
+        mapLocation(srcLat, srcLng, dstLat, dstLng, map, directionsDisplay)
         this.setState({ ...this.state, isFromFocus: false, isToFocus: false, orderMarkers: markers });
       });
   }
-
-  // mapLocation = (srcLat, srcLng, dstLat, dstLng) => {
-  //   var directionsService = new google.maps.DirectionsService();
-  //   const { map, directionsDisplay } = this.state;
-  //   const start = new google.maps.LatLng(srcLat, srcLng);
-  //   const end = new google.maps.LatLng(dstLat, dstLng);
-
-  //   const calcRoute = () => {
-  //     var request = {
-  //       origin: start,
-  //       destination: end,
-  //       travelMode: google.maps.TravelMode.DRIVING
-  //     };
-
-  //     const makeMarker = (position, icon, title) => {
-  //       return new google.maps.Marker({
-  //         position: position,
-  //         map: this.state.map,
-  //         icon: icon,
-  //         title: title
-  //       });
-  //     };
-
-  //     const addMarkers = orderMarkers => {
-  //       this.setState({
-  //         ...this.state,
-  //         orderMarkers: [...this.state.orderMarkers, ...orderMarkers]
-  //       });
-  //     };
-
-  //     const removeAllMarkersFromMap = () => {
-  //       const { map, orderMarkers } = this.state;
-  //       for (let i = 0; i < orderMarkers.length; i++) {
-  //         orderMarkers[i].setMap(null);
-  //       }
-  //       this.setState({ ...this.state, orderMarkers: [] });
-  //     };
-
-  //     directionsService.route(request, function (response, status) {
-  //       if (status == google.maps.DirectionsStatus.OK) {
-  //         directionsDisplay.setDirections(response);
-  //         const leg = response.routes[0].legs[0];
-  //         removeAllMarkersFromMap();
-  //         const markers = [];
-  //         markers.push(
-  //           makeMarker(leg.start_location, gorideCustomerMarker, "title")
-  //         );
-  //         markers.push(
-  //           makeMarker(leg.end_location, gorideDriverMarker, "title")
-  //         );
-  //         addMarkers(markers);
-  //         directionsDisplay.setMap(map);
-  //       }
-  //     });
-  //   };
-  //   calcRoute();
-  //   google.maps.event.addDomListener(window, "load", calcRoute);
-  // };
 
   onSuggestionItemClick = (name, lat, lng, fromOrTo) => {
     switch (fromOrTo) {
@@ -311,7 +257,6 @@ class OrderPanel extends Component {
       });
       this.updateMemberPosition(pos.coords.latitude, pos.coords.longitude);
     });
-    // this.mapLocation(-6.2002502, 106.785473, -6.1931677, 106.7895492);
   }
 
   componentWillUnmount() {

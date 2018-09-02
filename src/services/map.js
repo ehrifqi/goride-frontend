@@ -81,7 +81,7 @@ exports.geocodeLatLng = (latLng, cb) => {
   })
 }
 
-exports.mapLocation = (srcLat, srcLng, dstLat, dstLng, srcMarker, dstMarker, map, directionsDisplay, cb = undefined) => {
+exports.mapLocation = (srcLat, srcLng, dstLat, dstLng, map, directionsDisplay, cb = undefined) => {
   var directionsService = new google.maps.DirectionsService();
   const start = new google.maps.LatLng(srcLat, srcLng);
   const end = new google.maps.LatLng(dstLat, dstLng);
@@ -96,11 +96,11 @@ exports.mapLocation = (srcLat, srcLng, dstLat, dstLng, srcMarker, dstMarker, map
     directionsService.route(request, function (response, status) {
       if (status == google.maps.DirectionsStatus.OK) {
         directionsDisplay.setDirections(response);
-        const leg = response.routes[0].legs[0];
-        const markers = [];
-        markers.push(srcMarker);
-        markers.push(dstMarker);
         directionsDisplay.setMap(map);
+      }
+      else{
+        directionsDisplay.setMap(null);
+        directionsDisplay.set('directions', null);
       }
     });
   };
