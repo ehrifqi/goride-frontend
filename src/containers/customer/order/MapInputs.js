@@ -43,7 +43,7 @@ const MapInputs = props => {
               <div className="fourteen wide field">
                 <label htmlFor="from">From</label>
                 <div className="ui action input">
-                  <input type="text" name="from" placeholder={isFromFocus ? "Input keyword or click from map" : "Search..."} onChange={onInputChange} value={props.from} onFocus={onInputFocus}/>
+                  <input type="text" name="from" placeholder={isFromFocus ? "Input keyword or click from map" : "Search..."} onChange={onInputChange} value={props.from} onFocus={onInputFocus} />
                   <button className="ui icon button negative" onClick={() => clearInput("from")} >
                     <i className="trash alternate outline icon"></i>
                   </button>
@@ -68,7 +68,7 @@ const MapInputs = props => {
               <div className="fourteen wide field" style={{ position: 'relative' }}>
                 <label htmlFor="to">To</label>
                 <div className="ui action input">
-                  <input type="text" name="to" placeholder={isToFocus ? "Input keyword or click from map" : "Search..."} onChange={onInputChange} value={to} onFocus={onInputFocus}/>
+                  <input type="text" name="to" placeholder={isToFocus ? "Input keyword or click from map" : "Search..."} onChange={onInputChange} value={to} onFocus={onInputFocus} />
                   <button className="ui icon button negative" onClick={() => clearInput("to")}>
                     <i className="trash alternate outline icon"></i>
                   </button>
@@ -87,22 +87,23 @@ const MapInputs = props => {
           </div>
         </div>
       </div>
-
-      <section>
-        <div className="ui compact menu" style={{ margin: '1rem 0', backgroundColor: '#ecf0f1' }}>
-          <div style={{ padding: '1rem', textAlign: 'center', borderRight: '1px solid darkgray' }}>
-            <h3 style={{ margin: '1rem' }}>{`${Math.ceil(distance / 1000)} Km`}</h3>
+      {(distance && price) &&
+        <section>
+          <div className="ui compact menu" style={{ margin: '1rem 0', backgroundColor: '#ecf0f1' }}>
+            <div style={{ padding: '1rem', textAlign: 'center', borderRight: '1px solid darkgray' }}>
+              <h3 style={{ margin: '1rem' }}>{`${Math.ceil(distance / 1000)} Km`}</h3>
+            </div>
+            <div style={{ padding: '.6rem', textAlign: 'center' }}>
+              <h4 style={{ margin: '1rem' }}>Go-Pay</h4>
+              <p style={{ marginTop: '-10px', marginBottom: '10px' }}>Rp. {priceWithGopay},-</p>
+            </div>
+            <div style={{ padding: '.6rem', textAlign: 'center' }}>
+              <h4 style={{ margin: '1rem' }}>Normal</h4>
+              <p style={{ marginTop: '-10px', marginBottom: '10px' }}>Rp. {price},-</p>
+            </div>
           </div>
-          <div style={{ padding: '.6rem', textAlign: 'center' }}>
-            <h4 style={{ margin: '1rem' }}>Go-Pay</h4>
-            <p style={{ marginTop: '-10px', marginBottom: '10px' }}>Rp. {priceWithGopay},-</p>
-          </div>
-          <div style={{ padding: '.6rem', textAlign: 'center' }}>
-            <h4 style={{ margin: '1rem' }}>Normal</h4>
-            <p style={{ marginTop: '-10px', marginBottom: '10px' }}>Rp. {price},-</p>
-          </div>
-        </div>
-      </section>
+        </section>
+      }
       <section id="section-btns" style={{ marginTop: '1rem' }}>
         <button className="ui button orange">Order With Go-Pay</button>
         <button className="ui button green">Order</button>
