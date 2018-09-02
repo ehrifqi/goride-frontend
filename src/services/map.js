@@ -30,15 +30,17 @@ exports.getMapOptions = (lat, lng, zoom = 17) => {
 exports.position = (lat, lng) => ({ lat: lat, lng: lng })
 
 exports.createMarker = (lat, lng, map, icon = undefined, title = "", cb = undefined) => {
-  const marker = new google.maps.Marker({
-    position: { lat, lng },
-    icon: icon,
-    map: map,
-    title: title
-  });
+  if (lat && lng && map) {
+    const marker = new google.maps.Marker({
+      position: { lat, lng },
+      icon: icon,
+      map: map,
+      title: title
+    });
 
-  if (cb)
-    cb(marker);
+    if (cb)
+      cb(marker);
+  }
 }
 
 exports.clearMarkersFromMap = (markers, cb = undefined) => {
@@ -73,8 +75,35 @@ exports.geocodeLatLng = (latLng, cb) => {
   geocoder.geocode({ 'location': latLng }, function (results, status) {
     if (status === 'OK') {
       if (results[0]) {
-        cb(results[0].place_id, results[0].formatted_address,results[0].geometry.location.lat(), results[0].geometry.location.lng())
+        cb(results[0].place_id, results[0].formatted_address, results[0].geometry.location.lat(), results[0].geometry.location.lng())
       }
     }
   })
+}
+
+exports.mapLocation = (srcLat, srcLng, dstLat, dstLng, srcMarker, dstMarker, map, directionsDisplay, cb = undefined) => {
+  var directionsService = new google.maps.DirectionsService();
+  const start = new google.maps.LatLng(srcLat, srcLng);
+  const end = new google.maps.LatLng(dstLat, dstLng);
+
+  const calcRoute = () => {
+    var request = {
+      origin: start,
+      destination: end,
+      travelMode: google.maps.TravelMode.DRIVING
+    };
+
+    directionsService.route(request, function (response, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+        directionsDisplay.setDirections(response);
+        const leg = response.routes[0].legs[0];
+        const markers = [];
+        markers.push(srcMarker);
+        markers.push(dstMarker);
+        directionsDisplay.setMap(map);
+      }
+    });
+  };
+  calcRoute();
+  google.maps.event.addDomListener(window, "load", calcRoute);
 }
