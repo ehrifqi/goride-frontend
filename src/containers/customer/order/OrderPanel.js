@@ -3,7 +3,7 @@ import gorideDriverMarker from "./../../../assets/img/markers/goride-driver-mark
 import gorideCustomerMarker from "./../../../assets/img/markers/goride-customer-marker.png";
 import redMarker from "./../../../assets/img/markers/red-marker.png";
 import greenMarker from "./../../../assets/img/markers/green-marker.png";
-import { apiCall } from "../../../services/api";
+import { apiCall, extractTokenFromRes } from "../../../services/api";
 import {
   trackLocation,
   getCurrentPosition,
@@ -16,7 +16,9 @@ import {
   geocodeLatLng,
   mapLocation
 } from "../../../services/map";
-
+import { connect } from 'react-redux'
+import { getActiveBookByMember } from '../../../services/api/v1/activeBooks';
+import { reSetToken } from '../../../store/actions/auth'
 import MapInputs from "./MapInputs";
 
 // GOOGLE MAPS API
@@ -257,6 +259,15 @@ class OrderPanel extends Component {
       });
       this.updateMemberPosition(pos.coords.latitude, pos.coords.longitude);
     });
+
+    // GETS MEMBER ACTIVE_BOOK
+    getActiveBookByMember(this.props.member.id, this.props.token, (data) => this.props.reSetToken(extractTokenFromRes(data)))
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   componentWillUnmount() {
@@ -266,4 +277,14 @@ class OrderPanel extends Component {
   }
 }
 
-export default OrderPanel;
+function mapReduxStateToProps(reduxState) {
+  return {
+    member: reduxState.currentUser.user,
+    token: reduxState.currentUser.token
+  }
+}
+
+export default connect(mapReduxStateToProps, {
+  reSetToken
+})
+  (OrderPanel);
