@@ -3,13 +3,20 @@ import gorideDriverMarker from './../../../assets/img/markers/goride-driver-mark
 import gorideCustomerMarker from './../../../assets/img/markers/goride-customer-marker.png'
 import { apiCall } from '../../../services/api'
 import {
-  trackLocation, getCurrentPosition, clearLocationTrack, getMapOptions, createMarker, position, clearMarkersFromMap
+  trackLocation, getCurrentPosition, clearLocationTrack, getMapOptions, createMarker, position, clearMarkersFromMap, getDistanceInMeter, geocodeLatLng
 } from '../../../services/map'
 
 import MapInputs from './MapInputs'
 
 // GOOGLE MAPS API
 const google = window.google;
+
+/**
+ * srcLat: -6.1931677,
+      srcLng: 106.7895492,
+      dstLat: -6.2002502,
+      dstLng: 106.785473,
+ */
 
 const Map = props => {
   return (
@@ -24,16 +31,20 @@ class OrderPanel extends Component {
     super(props);
 
     this.state = {
+      // Order details
       from: '',
       to: '',
+      distance: undefined,
       price: undefined,
-      srcLng: -122.144886,
-      srcLat: 37.441888,
-      dstLng: -122.143019,
-      dstLat: 37.441883,
+      priceWithGopay: undefined,
+      srcLat: undefined,
+      srcLng: undefined,
+      dstLat: undefined,
+      dstLng: undefined,
+      markers: [],
+
       map: undefined,
       directionsDisplay: new google.maps.DirectionsRenderer(),
-      markers: [],
 
       //MapInputs
       isFromFocus: false,
@@ -82,17 +93,6 @@ class OrderPanel extends Component {
     this.setState({ ...this.state, [event.target.name]: event.target.value, callPlaceApiTimer: timer });
   }
 
-  mapPlaceSuggestionsToSuggestions = (placeSuggestions) => {
-    if (placeSuggestions !== undefined) {
-      return placeSuggestions.map(placeSuggestion => ({
-        id: placeSuggestion.id,
-        header: placeSuggestion.name,
-        description: placeSuggestion.formatted_address
-      }))
-    }
-    return undefined
-  }
-
   onInputFocus = (event) => {
     this.setState({ ...this.state, isFromFocus: false, isToFocus: false })
     switch (event.target.name) {
@@ -105,19 +105,24 @@ class OrderPanel extends Component {
     }
   }
 
-  onInputBlur = (event) => {
-    switch (event.target.name) {
-      case "from":
-        this.setState({ ...this.state, isFromFocus: false });
-        break;
-      case "to":
-        this.setState({ ...this.state, isToFocus: false });
-        break;
-    }
-  }
-
   clearInput = (name) => {
     this.setState({ ...this.state, [name]: '' })
+  }
+
+  updateOrderDetails = () => {
+    const { srcLat, srcLng, dstLat, dstLng } = this.state;
+    if (srcLat && srcLng && dstLat && dstLng) {
+      getDistanceInMeter(srcLat, srcLng, dstLat, dstLng, true, true, (distance) => {
+        apiCall('get', `/map/get_price?distance=${distance / 1000}`)
+          .then(res => {
+            this.setState({ ...this.state, distance: distance, price: res.price, priceWithGopay: res.price_with_gopay })
+          })
+          .catch(err => {
+
+          });
+      });
+    }
+    this.setState({...this.state, isFromFocus: false, isToFocus: false})
   }
 
   mapLocation = (srcLat, srcLng, dstLat, dstLng) => {
@@ -171,6 +176,17 @@ class OrderPanel extends Component {
     google.maps.event.addDomListener(window, 'load', calcRoute);
   }
 
+  onSuggestionItemClick = (name, lat, lng, fromOrTo) => {
+    switch (fromOrTo) {
+      case "from":
+        this.setState({ ...this.state, from: name, srcLat: lat, srcLng: lng }, () => this.updateOrderDetails());
+        break;
+      case "to":
+        this.setState({ ...this.state, to: name, dstLat: lat, dstLng: lng }, () => this.updateOrderDetails());
+        break;
+    }
+  }
+
   render() {
     return (
       <section id="member-order">
@@ -178,14 +194,17 @@ class OrderPanel extends Component {
         <MapInputs
           onInputChange={this.onInputChange}
           clearInput={(name) => this.clearInput(name)}
+          onSuggestionItemClick={this.onSuggestionItemClick}
           from={this.state.from}
           to={this.state.to}
           onInputFocus={this.onInputFocus}
-          onInputBlur={this.onInputBlur}
           isFromFocus={this.state.isFromFocus}
           isToFocus={this.state.isToFocus}
-          fromSuggestions={this.mapPlaceSuggestionsToSuggestions(this.state.fromSuggestions)}
-          toSuggestions={this.mapPlaceSuggestionsToSuggestions(this.state.toSuggestions)}
+          fromSuggestions={this.state.fromSuggestions}
+          toSuggestions={this.state.toSuggestions}
+          distance={this.state.distance}
+          price={this.state.price}
+          priceWithGopay={this.state.priceWithGopay}
         />
       </section>
     )
@@ -203,6 +222,17 @@ class OrderPanel extends Component {
     createMarker(lat, lng, map, gorideCustomerMarker, "Member");
   }
 
+  onMapClick = (event) => {
+    geocodeLatLng(event.latLng, (id, formatted_address, lat, lng) => {
+      if(this.state.isFromFocus){
+        this.setState({...this.state, from: formatted_address, srcLat: lat, srcLng: lng}, () => this.updateOrderDetails())
+      }
+      else if(this.state.isToFocus){
+        this.setState({...this.state, to: formatted_address, dstLat: lat, dstLng: lng}, () => this.updateOrderDetails())
+      }
+    })
+  }
+
   componentDidMount() {
     // GETS MEMBER INITIAL POSITION, ON SUCCESS -> STARTS TRACKING
     getCurrentPosition((pos) => {
@@ -211,8 +241,8 @@ class OrderPanel extends Component {
       const map = new google.maps.Map(mapCanvas, mapOptions);
       const trackLocationId = trackLocation(({ coords: { latitude: lat, longitude: lng } }) => {
         this.updateMemberPosition(lat, lng)
-      }
-      );
+      });
+      map.addListener('click', this.onMapClick);
       this.setState({
         ...this.state,
         map: map,
@@ -224,14 +254,13 @@ class OrderPanel extends Component {
       });
       this.updateMemberPosition(pos.coords.latitude, pos.coords.longitude)
     });
-    const { srcLat, srcLng, dstLat, dstLng } = this.state;
-    this.mapLocation(srcLat, srcLng, dstLat, dstLng);
+    this.mapLocation(-6.2002502, 106.785473, -6.1931677, 106.7895492);
   }
 
   componentWillUnmount() {
     const { trackLocationId } = this.state;
 
-    if(trackLocationId)
+    if (trackLocationId)
       clearLocationTrack(this.state.trackLocationId)
   }
 }

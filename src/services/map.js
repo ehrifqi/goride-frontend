@@ -22,7 +22,8 @@ exports.clearLocationTrack = trackLocationId => { navigator.geolocation.clearWat
 exports.getMapOptions = (lat, lng, zoom = 17) => {
   return {
     center: new google.maps.LatLng(lat, lng),
-    zoom: zoom
+    zoom: zoom,
+    clickableIcons: false
   }
 }
 

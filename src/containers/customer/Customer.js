@@ -51,7 +51,7 @@ class Customer extends Component {
             activeId={this.state.activeId}
             setActiveId={this.setActiveId}
           />
-          <div style={{ padding: '2rem 4rem 7rem 4rem', width: '100%' }}>
+          <div style={{ padding: '2rem 4rem 2rem 4rem', width: '100%' }}>
             <CustomerRoute />
           </div>
         </div>
