@@ -14,7 +14,7 @@ export function setCurrentUser(user, token, isAuthenticated = false) {
   };
 }
 
-export function reSetToken(token, isAuthenticated = false) {
+export function reSetToken(token, isAuthenticated = true) {
   return {
     type: RESET_TOKEN,
     token,
