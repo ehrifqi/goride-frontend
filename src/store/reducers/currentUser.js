@@ -1,12 +1,12 @@
 import { SET_CURRENT_USER, RESET_TOKEN } from '../actionTypes';
 
-const initialState = {
+const currentUserInitialState = {
   isAuthenticated: false,
   user: {},
   token: ''
 }
 
-export default (state = initialState, action) => {
+export default (state = currentUserInitialState, action) => {
   switch (action.type) {
     case SET_CURRENT_USER:
       return {
@@ -16,12 +16,13 @@ export default (state = initialState, action) => {
         token: action.token
       }
     case RESET_TOKEN:
+      localStorage.setItem('token', action.token);
       return {
         ...state,
         isAuthenticated: action.isAuthenticated,
         token: action.token
       }
     default:
-      return initialState;
+      return state;
   }
 }

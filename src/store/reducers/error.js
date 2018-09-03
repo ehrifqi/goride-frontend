@@ -1,10 +1,10 @@
 import { ADD_ERROR, REMOVE_ERROR } from '../actionTypes';
 
-const initialState = {
+const errorInitialState = {
   message: undefined
 }
 
-export default (state = initialState, action) => {
+export default (state = errorInitialState, action) => {
   switch (action.type) {
     case ADD_ERROR:
       return {
@@ -15,6 +15,6 @@ export default (state = initialState, action) => {
         message: undefined
       }
     default:
-      return initialState;
+      return state;
   }
 }
