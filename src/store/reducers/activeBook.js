@@ -7,7 +7,7 @@ export default (state = activeBookInitialState, action) => {
     case SET_ACTIVE_BOOK:
       return action.activeBook;
     case REMOVE_ACTIVE_BOOK:
-      return state;
+      return null;
     default:
       return state;
   }
