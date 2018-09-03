@@ -86,7 +86,10 @@ class OrderPanel extends Component {
 
       // DriverMap
       driverLat: undefined,
-      driverLng: undefined
+      driverLng: undefined,
+
+      // Socket,
+      newBookingEmitInterval: undefined
     };
 
     emitNewBookingCustomer({
@@ -154,21 +157,22 @@ class OrderPanel extends Component {
   };
 
   updateOrderDetails = () => {
-    const { srcLat, srcLng, dstLat, dstLng, map, directionsDisplay } = this.state;
+    const { srcLat, srcLng, dstLat, dstLng, distance, map, directionsDisplay } = this.state;
     if (srcLat && srcLng && dstLat && dstLng) {
-      getDistanceInMeter(srcLat, srcLng, dstLat, dstLng, true, true, distance => {
-        apiCall("get", `/map/get_price?distance=${distance / 1000}`)
-          .then(res => {
-            this.setState({
-              ...this.state,
-              distance: distance,
-              price: res.price,
-              priceWithGopay: res.price_with_gopay
-            });
-          })
-          .catch(err => { });
+      if (!distance) {
+        getDistanceInMeter(srcLat, srcLng, dstLat, dstLng, true, true, distance => {
+          apiCall("get", `/map/get_price?distance=${distance / 1000}`)
+            .then(res => {
+              this.setState({
+                ...this.state,
+                distance: distance,
+                price: res.price,
+                priceWithGopay: res.price_with_gopay
+              });
+            })
+            .catch(err => { });
+        });
       }
-      );
     }
     this.reInitMarkers();
   }
@@ -264,13 +268,19 @@ class OrderPanel extends Component {
   };
 
   componentDidMount() {
-    this.getPositionAndTrack();
+    this.initMap(() => {
+      this.trackMember();
+      this.initMapListeners();
+    });
+
 
     // GETS MEMBER ACTIVE_BOOK
     getActiveBookByMember(this.props.member.id, this.props.token, (data) => this.props.reSetToken(extractTokenFromRes(data)))
       .then(res => {
-        this.props.setActiveBook(res.active_book);
-        this.manageBooking(res.active_book);
+        if (res.active_book) {
+          this.props.setActiveBook(res.active_book);
+          this.manageBooking();
+        }
       });
   }
 
@@ -280,7 +290,8 @@ class OrderPanel extends Component {
     if (trackLocationId) clearLocationTrack(this.state.trackLocationId);
   }
 
-  manageBooking = (activeBook = this.props.activeBook) => {
+  manageBooking = () => {
+    const activeBook = this.props.activeBook;
     if (activeBook) {
       switch (activeBook.order_status_id) {
         case ORDERSTATUS.PENDING:
@@ -297,32 +308,46 @@ class OrderPanel extends Component {
       }
       this.setState({
         ...this.state,
-        srcLat: activeBook.srcLat,
-        srcLng: activeBook.srcLng,
-        dstLat: activeBook.dstLat,
-        dstLng: activeBook.dstLng,
+        srcLat: activeBook.src_lat,
+        srcLng: activeBook.src_long,
+        dstLat: activeBook.dest_lat,
+        dstLng: activeBook.dest_long,
         from: activeBook.from,
         to: activeBook.to,
         distance: (activeBook.distance * 1000),
         price: activeBook.price,
         priceWithGopay: activeBook.price_with_gopay
+      }, () => this.updateOrderDetails());
+    }
+    else {
+      this.setState({
+        ...this.state,
+        srcLat: undefined,
+        srcLng: undefined,
+        dstLat: undefined,
+        dstLng: undefined,
+        from: '',
+        to: '',
+        distance: undefined,
+        price: undefined,
+        priceWithGopay: undefined
       })
     }
-    this.setState({
-      ...this.state,
-      srcLat: undefined,
-      srcLng: undefined,
-      dstLat: undefined,
-      dstLng: undefined,
-      from: '',
-      to: '',
-      distance: undefined,
-      price: undefined,
-      priceWithGopay: undefined
-    })
   }
 
-  getPositionAndTrack = () => {
+  trackMember = () => {
+    getCurrentPosition(pos => {
+      const { map } = this.state;
+      const trackLocationId = trackLocation(
+        ({ coords: { latitude: lat, longitude: lng } }) => {
+          this.updateMemberPosition(lat, lng);
+        }
+      );
+      this.setState({ ...this.state, trackLocationId: trackLocationId });
+    });
+  }
+
+  initMap = (afterMapInitCallback) => {
     getCurrentPosition(pos => {
       const mapCanvas = document.getElementById("googleMap");
       const mapOptions = getMapOptions(
@@ -330,23 +355,26 @@ class OrderPanel extends Component {
         pos.coords.longitude
       );
       const map = new google.maps.Map(mapCanvas, mapOptions);
-      const trackLocationId = trackLocation(
-        ({ coords: { latitude: lat, longitude: lng } }) => {
-          this.updateMemberPosition(lat, lng);
-        }
-      );
-      map.addListener("click", this.onMapClick);
       this.setState({
         ...this.state,
         map: map,
-        trackLocationId: trackLocationId,
         directionsDisplay: new google.maps.DirectionsRenderer({
           map: map,
           suppressMarkers: true
         })
+      }, () => {
+        this.updateMemberPosition(pos.coords.latitude, pos.coords.longitude);
+        afterMapInitCallback()
       });
-      this.updateMemberPosition(pos.coords.latitude, pos.coords.longitude);
     });
+  }
+
+  initMapListeners = () => {
+    const { map } = this.state;
+    google.maps.event.addListenerOnce(map, 'idle', () => {
+      this.updateOrderDetails();
+    });
+    map.addListener("click", this.onMapClick);
   }
 
   updateMemberPosition = (lat, lng) => {
