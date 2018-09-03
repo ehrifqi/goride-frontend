@@ -17,7 +17,7 @@ import {
   mapLocation
 } from "../../../services/map";
 import { connect } from 'react-redux'
-import { getActiveBookByMember } from '../../../services/api/v1/activeBooks';
+import { getActiveBookByMember, moveActiveBookToHistory } from '../../../services/api/v1/activeBooks';
 import { ORDERSTATUS } from '../../../common/data/orderStatus'
 
 // Redux
@@ -26,6 +26,7 @@ import { setActiveBook, removeActiveBook } from '../../../store/actions/activeBo
 
 // Components
 import MapInputs from "./MapInputs";
+import OrderDetail from './OrderDetail';
 
 // SOCKET
 import { emitNewBookingCustomer } from '../../../services/socket/emitter/order'
@@ -42,7 +43,7 @@ const google = window.google;
 
 const Map = props => {
   return (
-    <div className="App" style={{ width: "100%", height: "600px" }}>
+    <div className="App" style={{ width: "100%", height: "600px", padding: '1rem 4rem' }}>
       <div id="googleMap" style={{ width: "100%", height: "100%" }} />
     </div>
   );
@@ -205,6 +206,12 @@ class OrderPanel extends Component {
     return (
       <section id="member-order">
         <Map />
+        {this.props.activeBook &&
+          <OrderDetail
+            orderStatusId={this.props.activeBook.order_status_id}
+            onOrderCancel={this.onOrderCancel}
+          />
+        }
         <MapInputs
           onInputChange={this.onInputChange}
           clearInput={name => this.clearInput(name)}
@@ -226,6 +233,18 @@ class OrderPanel extends Component {
         />
       </section>
     );
+  }
+
+  onOrderCancel = (orderStatusId, onFinishCallback = undefined) => {
+    moveActiveBookToHistory(this.props.activeBook.id, orderStatusId, this.props.token,
+      (data) => this.props.reSetToken(extractTokenFromRes(data))
+    )
+      .then(res => {
+        if (onFinishCallback)
+          onFinishCallback();
+      });
+
+    this.manageBooking();
   }
 
   onMapClick = event => {
@@ -261,7 +280,7 @@ class OrderPanel extends Component {
     if (trackLocationId) clearLocationTrack(this.state.trackLocationId);
   }
 
-  manageBooking = (activeBook) => {
+  manageBooking = (activeBook = this.props.activeBook) => {
     if (activeBook) {
       switch (activeBook.order_status_id) {
         case ORDERSTATUS.PENDING:
@@ -276,20 +295,31 @@ class OrderPanel extends Component {
         case ORDERSTATUS.CANCELED_BY_MEMBER:
           break;
       }
-      const distance = getDistanceInMeter(activeBook.srcLat, activeBook.srcLng, activeBook.dstLat, activeBook.dstLng, true, true, (d) => {
-        this.setState({
-          ...this.state,
-          srcLat: activeBook.srcLat,
-          srcLng: activeBook.srcLng,
-          dstLat: activeBook.dstLat,
-          dstLng: activeBook.dstLng,
-          from: activeBook.from,
-          to: activeBook.to,
-          distance: distance,
-          price: 0
-        })
+      this.setState({
+        ...this.state,
+        srcLat: activeBook.srcLat,
+        srcLng: activeBook.srcLng,
+        dstLat: activeBook.dstLat,
+        dstLng: activeBook.dstLng,
+        from: activeBook.from,
+        to: activeBook.to,
+        distance: (activeBook.distance * 1000),
+        price: activeBook.price,
+        priceWithGopay: activeBook.price_with_gopay
       })
     }
+    this.setState({
+      ...this.state,
+      srcLat: undefined,
+      srcLng: undefined,
+      dstLat: undefined,
+      dstLng: undefined,
+      from: '',
+      to: '',
+      distance: undefined,
+      price: undefined,
+      priceWithGopay: undefined
+    })
   }
 
   getPositionAndTrack = () => {
@@ -334,6 +364,7 @@ class OrderPanel extends Component {
 
 function mapReduxStateToProps(reduxState) {
   return {
+    activeBook: reduxState.activeBook,
     member: reduxState.currentUser.user,
     token: reduxState.currentUser.token
   }
