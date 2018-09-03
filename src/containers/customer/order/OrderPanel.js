@@ -18,7 +18,12 @@ import {
 } from "../../../services/map";
 import { connect } from 'react-redux'
 import { getActiveBookByMember } from '../../../services/api/v1/activeBooks';
+
+// Redux
 import { reSetToken } from '../../../store/actions/auth'
+import { setActiveBook, removeActiveBook } from '../../../store/actions/activeBook'
+
+// Components
 import MapInputs from "./MapInputs";
 
 // GOOGLE MAPS API
@@ -154,7 +159,11 @@ class OrderPanel extends Component {
       }
       );
     }
+    this.reInitMarkers();
+  }
 
+  reInitMarkers = () => {
+    const { srcLat, srcLng, dstLat, dstLng, map, directionsDisplay } = this.state;
     clearMarkersFromMap(this.state.orderMarkers,
       () => {
         const markers = []
@@ -200,22 +209,14 @@ class OrderPanel extends Component {
           distance={this.state.distance}
           price={this.state.price}
           priceWithGopay={this.state.priceWithGopay}
+          srcLat={this.state.srcLat}
+          srcLng={this.state.srcLng}
+          dstLat={this.state.dstLat}
+          dstLng={this.state.dstLng}
         />
       </section>
     );
   }
-
-  updateMemberPosition = (lat, lng) => {
-    const { map } = this.state;
-    map.setCenter(new google.maps.LatLng(lat, lng));
-    this.setState({
-      ...this.state,
-      memberLat: lat,
-      memberLng: lng
-    });
-
-    createMarker(lat, lng, map, gorideCustomerMarker, "Member");
-  };
 
   onMapClick = event => {
     geocodeLatLng(event.latLng, (id, formatted_address, lat, lng) => {
@@ -234,7 +235,20 @@ class OrderPanel extends Component {
   };
 
   componentDidMount() {
-    // GETS MEMBER INITIAL POSITION, ON SUCCESS -> STARTS TRACKING
+    this.getPositionAndTrack();
+
+    // GETS MEMBER ACTIVE_BOOK
+    getActiveBookByMember(this.props.member.id, this.props.token, (data) => this.props.reSetToken(extractTokenFromRes(data)))
+      .then(res => this.props.setActiveBook(res.active_book));
+  }
+
+  componentWillUnmount() {
+    const { trackLocationId } = this.state;
+
+    if (trackLocationId) clearLocationTrack(this.state.trackLocationId);
+  }
+
+  getPositionAndTrack = () => {
     getCurrentPosition(pos => {
       const mapCanvas = document.getElementById("googleMap");
       const mapOptions = getMapOptions(
@@ -259,22 +273,19 @@ class OrderPanel extends Component {
       });
       this.updateMemberPosition(pos.coords.latitude, pos.coords.longitude);
     });
-
-    // GETS MEMBER ACTIVE_BOOK
-    getActiveBookByMember(this.props.member.id, this.props.token, (data) => this.props.reSetToken(extractTokenFromRes(data)))
-      .then(res => {
-        console.log(res)
-      })
-      .catch(err => {
-        console.log(err)
-      })
   }
 
-  componentWillUnmount() {
-    const { trackLocationId } = this.state;
+  updateMemberPosition = (lat, lng) => {
+    const { map } = this.state;
+    map.setCenter(new google.maps.LatLng(lat, lng));
+    this.setState({
+      ...this.state,
+      memberLat: lat,
+      memberLng: lng
+    });
 
-    if (trackLocationId) clearLocationTrack(this.state.trackLocationId);
-  }
+    createMarker(lat, lng, map, gorideCustomerMarker, "Member");
+  };
 }
 
 function mapReduxStateToProps(reduxState) {
@@ -285,6 +296,7 @@ function mapReduxStateToProps(reduxState) {
 }
 
 export default connect(mapReduxStateToProps, {
-  reSetToken
-})
-  (OrderPanel);
+  reSetToken,
+  setActiveBook,
+  removeActiveBook
+})(OrderPanel);

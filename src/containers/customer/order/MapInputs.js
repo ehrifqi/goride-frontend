@@ -2,6 +2,11 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 
 import SuggestionBox from '../../../components/list/SuggestionBox';
+import { extractTokenFromRes } from '../../../services/api'
+import { connect } from 'react-redux';
+import { createActiveBook, getActiveBookByMember } from '../../../services/api/v1/activeBooks';
+import { reSetToken } from '../../../store/actions/auth'
+import { setActiveBook } from '../../../store/actions/activeBook'
 
 const MapInputs = props => {
   const mapPlaceSuggestionsToSuggestions = (placeSuggestions) => {
@@ -28,6 +33,23 @@ const MapInputs = props => {
         props.onSuggestionItemClick(toPlace[0].name, toPlace[0].lat, toPlace[0].lng, fromOrTo)
       }
     }
+  }
+
+  const btnOrderClick = (event, withGopay) => {
+    event.preventDefault();
+
+    // TODO: with gopay logic
+    const { member, srcLat, srcLng, dstLat, dstLng, from, to, price, token } = props;
+
+    createActiveBook(member.id, srcLat, srcLng, dstLat, dstLng, from, to, price, token,
+      (data) => props.reSetToken(extractTokenFromRes(data))
+    )
+      .then(res => {
+        getActiveBookByMember(member.id, token,
+          (data) => props.reSetToken(extractTokenFromRes(data))
+        )
+          .then(res => props.setActiveBook(res.active_book));
+      });
   }
 
   const {
@@ -105,8 +127,8 @@ const MapInputs = props => {
         </section>
       }
       <section id="section-btns" style={{ marginTop: '1rem' }}>
-        <button className="ui button orange">Order With Go-Pay</button>
-        <button className="ui button green">Order</button>
+        <button className="ui button orange" onClick={(e) => btnOrderClick(e, true)}>Order With Go-Pay</button>
+        <button className="ui button green" onClick={(e) => btnOrderClick(e, false)}>Order</button>
       </section>
     </div>
   )
@@ -123,7 +145,21 @@ MapInputs.propTypes = {
   onSuggestionItemClick: PropTypes.func.isRequired,
   distance: PropTypes.number,
   price: PropTypes.number,
-  priceWithGopay: PropTypes.number
+  priceWithGopay: PropTypes.number,
+  srcLat: PropTypes.number,
+  srcLng: PropTypes.number,
+  dstLat: PropTypes.number,
+  dstLng: PropTypes.number
 }
 
-export default MapInputs
+function mapStateToProps(reduxState) {
+  return {
+    member: reduxState.currentUser.user,
+    token: reduxState.currentUser.token
+  }
+}
+
+export default connect(mapStateToProps, {
+  reSetToken,
+  setActiveBook
+})(MapInputs)
