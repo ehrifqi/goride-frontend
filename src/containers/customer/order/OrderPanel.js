@@ -18,6 +18,7 @@ import {
 } from "../../../services/map";
 import { connect } from 'react-redux'
 import { getActiveBookByMember } from '../../../services/api/v1/activeBooks';
+import { ORDERSTATUS } from '../../../common/data/orderStatus'
 
 // Redux
 import { reSetToken } from '../../../store/actions/auth'
@@ -25,6 +26,9 @@ import { setActiveBook, removeActiveBook } from '../../../store/actions/activeBo
 
 // Components
 import MapInputs from "./MapInputs";
+
+// SOCKET
+import { emitNewBookingCustomer } from '../../../services/socket/emitter/order'
 
 // GOOGLE MAPS API
 const google = window.google;
@@ -83,6 +87,12 @@ class OrderPanel extends Component {
       driverLat: undefined,
       driverLng: undefined
     };
+
+    emitNewBookingCustomer({
+      member_id: 15,
+      driver_id: null,
+      order_status_id: 1
+    })
   }
 
   onInputChange = event => {
@@ -239,13 +249,47 @@ class OrderPanel extends Component {
 
     // GETS MEMBER ACTIVE_BOOK
     getActiveBookByMember(this.props.member.id, this.props.token, (data) => this.props.reSetToken(extractTokenFromRes(data)))
-      .then(res => this.props.setActiveBook(res.active_book));
+      .then(res => {
+        this.props.setActiveBook(res.active_book);
+        this.manageBooking(res.active_book);
+      });
   }
 
   componentWillUnmount() {
     const { trackLocationId } = this.state;
 
     if (trackLocationId) clearLocationTrack(this.state.trackLocationId);
+  }
+
+  manageBooking = (activeBook) => {
+    if (activeBook) {
+      switch (activeBook.order_status_id) {
+        case ORDERSTATUS.PENDING:
+
+          break;
+        case ORDERSTATUS.ACCEPTED:
+          break;
+        case ORDERSTATUS.PICKED_UP:
+          break;
+        case ORDERSTATUS.CANCELED_BY_DRIVER:
+          break;
+        case ORDERSTATUS.CANCELED_BY_MEMBER:
+          break;
+      }
+      const distance = getDistanceInMeter(activeBook.srcLat, activeBook.srcLng, activeBook.dstLat, activeBook.dstLng, true, true, (d) => {
+        this.setState({
+          ...this.state,
+          srcLat: activeBook.srcLat,
+          srcLng: activeBook.srcLng,
+          dstLat: activeBook.dstLat,
+          dstLng: activeBook.dstLng,
+          from: activeBook.from,
+          to: activeBook.to,
+          distance: distance,
+          price: 0
+        })
+      })
+    }
   }
 
   getPositionAndTrack = () => {

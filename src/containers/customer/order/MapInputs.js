@@ -39,9 +39,9 @@ const MapInputs = props => {
     event.preventDefault();
 
     // TODO: with gopay logic
-    const { member, srcLat, srcLng, dstLat, dstLng, from, to, price, token } = props;
+    const { member, srcLat, srcLng, dstLat, dstLng, from, to, distance, price, priceWithGopay, token } = props;
 
-    createActiveBook(member.id, srcLat, srcLng, dstLat, dstLng, from, to, price, token,
+    createActiveBook(member.id, srcLat, srcLng, dstLat, dstLng, from, to, distance/1000, price, priceWithGopay, token,
       (data) => props.reSetToken(extractTokenFromRes(data))
     )
       .then(res => {
@@ -54,8 +54,10 @@ const MapInputs = props => {
 
   const {
     from, to, onInputChange, clearInput, onInputFocus, isFromFocus, isToFocus, fromSuggestions, toSuggestions, distance, price, priceWithGopay } = props;
+
+  const isDisabled = props.activeBook != null;
   return (
-    <div className="ui segment" style={{ border: '1.5px solid #27ae60', margin: '1rem 4rem' }}>
+    <div className={`ui segment ${isDisabled ? "disabled" : " "}`} style={{ border: '1.5px solid #27ae60', margin: '1rem 4rem' }}>
       <h3 className="ui header">Booking Details</h3>
       <div className="row">
         <div className="col-lg-6">
@@ -65,8 +67,8 @@ const MapInputs = props => {
               <div className="fourteen wide field">
                 <label htmlFor="from">From</label>
                 <div className="ui action input">
-                  <input type="text" name="from" placeholder={isFromFocus ? "Input keyword or click from map" : "Search..."} onChange={onInputChange} value={props.from} onFocus={onInputFocus} />
-                  <button className="ui icon button negative" onClick={() => clearInput("from")} >
+                  <input type="text" className={`${isDisabled?"disabled": ""}`} name="from" placeholder={isFromFocus ? "Input keyword or click from map" : "Search..."} onChange={onInputChange} value={props.from} onFocus={onInputFocus} />
+                  <button className={`ui icon button negative ${isDisabled ? "disabled" : ""}`} onClick={() => clearInput("from")} >
                     <i className="trash alternate outline icon"></i>
                   </button>
                 </div>
@@ -90,8 +92,8 @@ const MapInputs = props => {
               <div className="fourteen wide field" style={{ position: 'relative' }}>
                 <label htmlFor="to">To</label>
                 <div className="ui action input">
-                  <input type="text" name="to" placeholder={isToFocus ? "Input keyword or click from map" : "Search..."} onChange={onInputChange} value={to} onFocus={onInputFocus} />
-                  <button className="ui icon button negative" onClick={() => clearInput("to")}>
+                  <input type="text" className={`${isDisabled?"disabled": ""}`} name="to" placeholder={isToFocus ? "Input keyword or click from map" : "Search..."} onChange={onInputChange} value={to} onFocus={onInputFocus} />
+                  <button className={`ui icon button negative ${isDisabled ? "disabled" : ""}`} onClick={() => clearInput("to")}>
                     <i className="trash alternate outline icon"></i>
                   </button>
                 </div>
@@ -127,8 +129,8 @@ const MapInputs = props => {
         </section>
       }
       <section id="section-btns" style={{ marginTop: '1rem' }}>
-        <button className="ui button orange" onClick={(e) => btnOrderClick(e, true)}>Order With Go-Pay</button>
-        <button className="ui button green" onClick={(e) => btnOrderClick(e, false)}>Order</button>
+        <button className={`ui button orange ${isDisabled ? "disabled" : ""}`} onClick={(e) => btnOrderClick(e, true)}>Order With Go-Pay</button>
+        <button className={`ui button green ${isDisabled ? "disabled" : ""}`} onClick={(e) => btnOrderClick(e, false)}>Order</button>
       </section>
     </div>
   )
@@ -154,6 +156,7 @@ MapInputs.propTypes = {
 
 function mapStateToProps(reduxState) {
   return {
+    activeBook: reduxState.activeBook,
     member: reduxState.currentUser.user,
     token: reduxState.currentUser.token
   }
