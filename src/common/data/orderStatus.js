@@ -1,0 +1,9 @@
+export const ORDERSTATUS = {
+    SEARCHING_FOR_DRIVER: 0,
+    PENDING: 1,
+    ACCEPTED: 2,
+    PICKED_UP: 3,
+    ARRIVED: 4,
+    CANCELED_BY_DRIVER: 5,
+    CANCELED_BY_MEMBER: 6
+}
