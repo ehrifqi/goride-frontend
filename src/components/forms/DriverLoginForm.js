@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { signInDriver } from '../../store/actions/auth'
 import { addError, removeError } from '../../store/actions/error'
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 import './Form.css';
 class DriverLoginForm extends Component {
@@ -28,7 +29,8 @@ class DriverLoginForm extends Component {
       password: this.state.password
     })
       .then(res => {
-
+        this.setState({ ...this.state, loading: false });
+        this.props.history.push('/driver')
       })
       .catch(err => {
         this.props.addError(err.data.message);
@@ -75,4 +77,4 @@ function mapStateToProps(reduxState) {
   }
 }
 
-export default connect(mapStateToProps, { signInDriver, addError, removeError })(DriverLoginForm);
+export default withRouter(connect(mapStateToProps, { signInDriver, addError, removeError })(DriverLoginForm));
