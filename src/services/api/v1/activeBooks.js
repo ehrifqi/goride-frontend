@@ -7,6 +7,12 @@ export function getActiveBookByMember(memberId, token, callback = undefined) {
   }, callback);
 }
 
+export function getActiveBookByDriver(driverId, token, callback = undefined) {
+  return apiCall('get', `/active_books/get_by_driver?driver_id=${driverId}`, undefined, {
+    'Authorization': `Bearer ${token}`
+  }, callback)
+}
+
 export function createActiveBook(memberId, srcLat, srcLng, dstLat, dstLng, from, to, distance, price, priceWithGopay, token, callback = undefined) {
   return apiCall('post', `/active_books/create_active_book`, {
     member_id: memberId,
