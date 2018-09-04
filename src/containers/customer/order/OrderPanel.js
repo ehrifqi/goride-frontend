@@ -52,7 +52,7 @@ const Map = props => {
 class OrderPanel extends Component {
   constructor(props) {
     super(props);
-
+    this.INTERVAL_NEWBOOKING = 5000;
     this.state = {
       // Order details
       from: "",
@@ -284,18 +284,46 @@ class OrderPanel extends Component {
       });
   }
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     const { trackLocationId } = this.state;
 
-    if (trackLocationId) clearLocationTrack(this.state.trackLocationId);
+    if (trackLocationId) 
+      clearLocationTrack(this.state.trackLocationId);
+
+    this.clearAllBookingEmitInterval();
+  }
+
+  clearAllBookingEmitInterval = () => {
+    const newBookingEmitInterval = this.state.newBookingEmitInterval;
+    if(newBookingEmitInterval)
+      clearInterval(newBookingEmitInterval);
   }
 
   manageBooking = () => {
     const activeBook = this.props.activeBook;
+    this.clearAllBookingEmitInterval();
     if (activeBook) {
+      const setPlacesToState = () => {
+        this.setState({
+          ...this.state,
+          srcLat: activeBook.src_lat,
+          srcLng: activeBook.src_long,
+          dstLat: activeBook.dest_lat,
+          dstLng: activeBook.dest_long,
+          from: activeBook.from,
+          to: activeBook.to,
+          distance: (activeBook.distance * 1000),
+          price: activeBook.price,
+          priceWithGopay: activeBook.price_with_gopay
+        }, () => this.updateOrderDetails());
+      }
+
       switch (activeBook.order_status_id) {
         case ORDERSTATUS.PENDING:
-
+          const newBookingInterval = setInterval(() => {
+            emitNewBookingCustomer(activeBook);
+          }, this.INTERVAL_NEWBOOKING);
+          this.setState({...this.state, newBookingEmitInterval: newBookingInterval}, () => setPlacesToState())
           break;
         case ORDERSTATUS.ACCEPTED:
           break;
@@ -306,18 +334,6 @@ class OrderPanel extends Component {
         case ORDERSTATUS.CANCELED_BY_MEMBER:
           break;
       }
-      this.setState({
-        ...this.state,
-        srcLat: activeBook.src_lat,
-        srcLng: activeBook.src_long,
-        dstLat: activeBook.dest_lat,
-        dstLng: activeBook.dest_long,
-        from: activeBook.from,
-        to: activeBook.to,
-        distance: (activeBook.distance * 1000),
-        price: activeBook.price,
-        priceWithGopay: activeBook.price_with_gopay
-      }, () => this.updateOrderDetails());
     }
     else {
       this.setState({
