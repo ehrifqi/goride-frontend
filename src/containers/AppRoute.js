@@ -10,6 +10,7 @@ import Register from './Register';
 import CustomerRegis from './CustomerRegis';
 import DriverRegis from './DriverRegis';
 import Customer from './customer/Customer';
+import Driver from './driver/Driver';
 
 const AppRoute = props => {
   return (
@@ -25,6 +26,7 @@ const AppRoute = props => {
               <Route exact path="/register/driver" render={props => <DriverRegis {...props} />} />
 
               <Route path='/customer' render={props => <Customer {...props} />} />
+              <Route path='/driver' render={props => <Driver {...props} />} />
           </Switch>
       </div>
   )
