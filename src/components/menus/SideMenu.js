@@ -17,7 +17,7 @@ class SideMenu extends Component {
   }
 
   mapCustomerMenusToSideMenu = () => {
-    return this.props.customerMenus.map((menu) => {
+    return this.props.menus.map((menu) => {
       return (
         <a
           key={menu.id}
@@ -41,7 +41,7 @@ class SideMenu extends Component {
 }
 
 SideMenu.propTypes = {
-  customerMenus: PropTypes.array.isRequired,
+  menus: PropTypes.array.isRequired,
   activeId: PropTypes.string.isRequired,
   setActiveId: PropTypes.func.isRequired
 }

@@ -47,7 +47,7 @@ class Customer extends Component {
         />
         <div style={{ display: 'flex' }}>
           <SideMenu 
-            customerMenus={customerMenus}
+            menus={customerMenus}
             activeId={this.state.activeId}
             setActiveId={this.setActiveId}
           />
