@@ -8,6 +8,8 @@ import { apiCall, extractTokenFromRes } from '../../../services/api'
 
 import { removeActiveBook } from '../../../store/actions/activeBook';
 
+import { emitNewBookingMemberCancellation } from '../../../services/socket/emitter/order'
+
 class OrderDetail extends Component {
   constructor(props) {
     super(props);
@@ -34,6 +36,13 @@ class OrderDetail extends Component {
 
   setGoingToCancelAsFalse = (event) => {
     this.setState({ ...this.state, goingToCancel: false })
+  }
+
+  cancelOrder = (event) => {
+    this.props.onOrderCancel(ORDERSTATUS.CANCELED_BY_MEMBER, () => {
+      emitNewBookingMemberCancellation(this.props.activeBook);
+      this.props.removeActiveBook();
+    });
   }
 
   cancelButton = () => {
@@ -111,11 +120,9 @@ class OrderDetail extends Component {
         break;
       case ORDERSTATUS.ACCEPTED:
         return (
-          <div className={`ui green segment`} style={{ border: '1.5px solid #27ae60', margin: '1rem 4rem' }}>
-            <div style={{ textAlign: 'center' }}>
-              {this.getDetailPanel("Your Driver is picking you up...")}
-              {this.cancelButton()}
-            </div>
+          <div style={{ textAlign: 'center' }}>
+            {this.getDetailPanel("Your Driver is picking you up...")}
+            {this.cancelButton()}
           </div>
         )
       case ORDERSTATUS.PICKED_UP:
@@ -145,7 +152,9 @@ class OrderDetail extends Component {
           <div className={`ui segment`} style={{ border: '1.5px solid #e67e22', backgroundColor: '#ECF0F1', margin: '1rem 4rem' }}>
             <div style={{ display: 'block', textAlign: 'center' }}>
               <h3 className="ui header">Our driver would be sad to be cancelled, are you sure?</h3>
-              <button className="ui button" style={{ marginRight: '10px' }}>Yes, Cancel Order</button>
+              <button className="ui button" style={{ marginRight: '10px' }} onClick={this.cancelOrder}>
+                Yes, Cancel Order
+              </button>
               <button className="ui button negative" onClick={() => this.setState({ ...this.state, goingToCancel: false })}>No, Keep Order</button>
             </div>
           </div>

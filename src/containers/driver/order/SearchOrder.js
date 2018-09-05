@@ -20,6 +20,7 @@ import SearchPanel from './SearchPanel';
 import BookDetails from './BookDetails';
 
 import { emitNewBookingDriverCancellation } from '../../../services/socket/emitter/order'
+import { subscribeToNewBookingMemberCancellation } from '../../../services/socket/subscriber/order'
 
 // Redux
 import { reSetToken } from '../../../store/actions/auth'
@@ -165,7 +166,11 @@ class SearchOrder extends Component {
       this.putMarkersOnMap(activeBook.src_lat, activeBook.src_long, activeBook.dest_lat, activeBook.dest_long);
       switch (activeBook.order_status_id) {
         case ORDERSTATUS.ACCEPTED:
-
+          subscribeToNewBookingMemberCancellation(this.props.driver.id, () => {
+            this.props.removeActiveBook();
+            this.manageBooking();
+            window.location.reload();
+          });
           break;
         case ORDERSTATUS.PICKED_UP:
           break;

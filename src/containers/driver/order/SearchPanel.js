@@ -19,6 +19,7 @@ import {
 import {
   emitNewBookingAccepted
 } from '../../../services/socket/emitter/order'
+import { ORDERSTATUS } from '../../../common/data/orderStatus'
 
 const BookDetails = props => {
   const { book } = props;
@@ -152,8 +153,8 @@ class SearchPanel extends Component {
     })
       .then(activeBook => {
         if (activeBook && !activeBook.driver_id) {
-          this.props.setActiveBook({ ...activeBook.active_book, driver_id: this.props.driver.id });
-          emitNewBookingAccepted({...activeBook.active_book, driver_id: this.props.driver.id});
+          this.props.setActiveBook({ ...activeBook.active_book, driver_id: this.props.driver.id, order_status_id: ORDERSTATUS.ACCEPTED });
+          emitNewBookingAccepted({ ...activeBook.active_book, driver_id: this.props.driver.id, order_status_id: ORDERSTATUS.ACCEPTED });
           //No driver yet, take order!
           setDriver(this.state.newBook.id, this.props.driver.id, this.props.token, (data) => {
             this.props.reSetToken(extractTokenFromRes(data))
