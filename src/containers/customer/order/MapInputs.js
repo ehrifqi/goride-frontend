@@ -41,14 +41,17 @@ const MapInputs = props => {
     // TODO: with gopay logic
     const { member, srcLat, srcLng, dstLat, dstLng, from, to, distance, price, priceWithGopay, token } = props;
 
-    createActiveBook(member.id, srcLat, srcLng, dstLat, dstLng, from, to, distance/1000, price, priceWithGopay, token,
+    createActiveBook(member.id, srcLat, srcLng, dstLat, dstLng, from, to, distance / 1000, price, priceWithGopay, token,
       (data) => props.reSetToken(extractTokenFromRes(data))
     )
       .then(res => {
         getActiveBookByMember(member.id, token,
           (data) => props.reSetToken(extractTokenFromRes(data))
         )
-          .then(res => props.setActiveBook(res.active_book));
+          .then(res => { 
+            props.setActiveBook(res.active_book);
+            props.btnOrderClickCallback();
+          });
       });
   }
 
@@ -67,7 +70,7 @@ const MapInputs = props => {
               <div className="fourteen wide field">
                 <label htmlFor="from">From</label>
                 <div className="ui action input">
-                  <input type="text" className={`${isDisabled?"disabled": ""}`} name="from" placeholder={isFromFocus ? "Input keyword or click from map" : "Search..."} onChange={onInputChange} value={props.from} onFocus={onInputFocus} />
+                  <input type="text" className={`${isDisabled ? "disabled" : ""}`} name="from" placeholder={isFromFocus ? "Input keyword or click from map" : "Search..."} onChange={onInputChange} value={props.from} onFocus={onInputFocus} />
                   <button className={`ui icon button negative ${isDisabled ? "disabled" : ""}`} onClick={() => clearInput("from")} >
                     <i className="trash alternate outline icon"></i>
                   </button>
@@ -92,7 +95,7 @@ const MapInputs = props => {
               <div className="fourteen wide field" style={{ position: 'relative' }}>
                 <label htmlFor="to">To</label>
                 <div className="ui action input">
-                  <input type="text" className={`${isDisabled?"disabled": ""}`} name="to" placeholder={isToFocus ? "Input keyword or click from map" : "Search..."} onChange={onInputChange} value={to} onFocus={onInputFocus} />
+                  <input type="text" className={`${isDisabled ? "disabled" : ""}`} name="to" placeholder={isToFocus ? "Input keyword or click from map" : "Search..."} onChange={onInputChange} value={to} onFocus={onInputFocus} />
                   <button className={`ui icon button negative ${isDisabled ? "disabled" : ""}`} onClick={() => clearInput("to")}>
                     <i className="trash alternate outline icon"></i>
                   </button>
@@ -151,7 +154,8 @@ MapInputs.propTypes = {
   srcLat: PropTypes.number,
   srcLng: PropTypes.number,
   dstLat: PropTypes.number,
-  dstLng: PropTypes.number
+  dstLng: PropTypes.number,
+  btnOrderClickCallback: PropTypes.func.isRequired
 }
 
 function mapStateToProps(reduxState) {

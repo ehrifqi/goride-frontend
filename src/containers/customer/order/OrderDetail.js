@@ -13,7 +13,11 @@ class OrderDetail extends Component {
     super(props);
 
     this.state = {
-      goingToCancel: false
+      goingToCancel: false,
+      isPickedUp: false,
+      driverName: '',
+      driverPhone: ''
+
     }
   }
 
@@ -28,6 +32,10 @@ class OrderDetail extends Component {
     }
   }
 
+  setGoingToCancelAsFalse = (event) => {
+    this.setState({ ...this.state, goingToCancel: false })
+  }
+
   cancelButton = () => {
     switch (this.props.orderStatusId) {
       case ORDERSTATUS.PENDING:
@@ -36,13 +44,54 @@ class OrderDetail extends Component {
             <button className="ui button negative" style={{ marginTop: '1rem' }} onClick={this.goingToCancelOrderBtnClick}>Cancel Booking</button>
           </div>
         )
-        break;
       case ORDERSTATUS.ACCEPTED:
         return (
-          <button className="ui button negative">Cancel Order</button>
+          <div>
+            {this.state.goingToCancel == false &&
+              <button className="ui button negative" onClick={this.goingToCancelOrderBtnClick}>Cancel Order</button>
+            }
+          </div>
         )
-        break;
     }
+  }
+
+  getDetailPanel = (statusMessage) => {
+    return (
+      <React.Fragment>
+        <h2 style={{ display: 'inline-block' }} className="ui header">
+          <i className="user circle icon"></i>
+          <div className="content">
+            {this.state.driverName}
+            <div className="sub header">({this.state.driverPhone})</div>
+          </div>
+        </h2>
+        <h3>{statusMessage}</h3>
+        <div className="item">
+          <i className="marker icon"></i>
+          <div className="content">
+            From: {this.props.activeBook.from}
+          </div>
+        </div>
+        <div className="item">
+          <i className="marker icon"></i>
+          <div className="content">
+            To: {this.props.activeBook.to}
+          </div>
+        </div>
+        <div className="item">
+          <i className="money bill alternate outline icon"></i>
+          <div className="content">
+            Price: {this.props.activeBook.price}
+          </div>
+        </div>
+        <div className="item">
+          <i className="location arrow icon"></i>
+          <div className="content">
+            Distance: {`${this.props.activeBook.distance} km`}
+          </div>
+        </div>
+      </React.Fragment>
+    )
   }
 
   showDetails = () => {
@@ -61,8 +110,22 @@ class OrderDetail extends Component {
         )
         break;
       case ORDERSTATUS.ACCEPTED:
-        break;
+        return (
+          <div className={`ui green segment`} style={{ border: '1.5px solid #27ae60', margin: '1rem 4rem' }}>
+            <div style={{ textAlign: 'center' }}>
+              {this.getDetailPanel("Your Driver is picking you up...")}
+              {this.cancelButton()}
+            </div>
+          </div>
+        )
       case ORDERSTATUS.PICKED_UP:
+        return (
+          <div className={`ui green segment`} style={{ border: '1.5px solid #27ae60', margin: '1rem 4rem' }}>
+            <div style={{ textAlign: 'center' }}>
+              {this.getDetailPanel("On the way with driver")}
+            </div>
+          </div>
+        )
         break;
       case ORDERSTATUS.CANCELED_BY_DRIVER:
         break;
@@ -83,12 +146,16 @@ class OrderDetail extends Component {
             <div style={{ display: 'block', textAlign: 'center' }}>
               <h3 className="ui header">Our driver would be sad to be cancelled, are you sure?</h3>
               <button className="ui button" style={{ marginRight: '10px' }}>Yes, Cancel Order</button>
-              <button className="ui button negative">No, Keep Order</button>
+              <button className="ui button negative" onClick={() => this.setState({ ...this.state, goingToCancel: false })}>No, Keep Order</button>
             </div>
           </div>
         }
       </React.Fragment>
     )
+  }
+
+  componentDidMount() {
+    // TODO, CALL SHOW DRIVER, SET TO STATE
   }
 }
 

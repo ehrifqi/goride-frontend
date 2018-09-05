@@ -30,6 +30,15 @@ import OrderDetail from './OrderDetail';
 
 // SOCKET
 import { emitNewBookingCustomer } from '../../../services/socket/emitter/order'
+import {
+  subscribeToNewBookingAccepted,
+  removeAllSubscriber,
+  subscribeToNewBookingDriverCancellation
+} from '../../../services/socket/subscriber/order'
+import {
+  subscribeToMoveDriver
+} from '../../../services/socket/subscriber/map'
+
 
 // GOOGLE MAPS API
 const google = window.google;
@@ -87,16 +96,11 @@ class OrderPanel extends Component {
       // DriverMap
       driverLat: undefined,
       driverLng: undefined,
+      driverMarkers: [],
 
       // Socket,
       newBookingEmitInterval: undefined
     };
-
-    emitNewBookingCustomer({
-      member_id: 15,
-      driver_id: null,
-      order_status_id: 1
-    })
   }
 
   onInputChange = event => {
@@ -182,8 +186,10 @@ class OrderPanel extends Component {
     clearMarkersFromMap(this.state.orderMarkers,
       () => {
         const markers = []
-        createMarker(srcLat, srcLng, map, redMarker, "Member", (marker) => markers.push(marker));
-        createMarker(dstLat, dstLng, map, greenMarker, "Member", (marker) => markers.push(marker));
+        if (srcLat, srcLng) 
+          createMarker(srcLat, srcLng, map, redMarker, "Member", (marker) => markers.push(marker));
+        if(dstLat, dstLng)
+          createMarker(dstLat, dstLng, map, greenMarker, "Member", (marker) => markers.push(marker));
         mapLocation(srcLat, srcLng, dstLat, dstLng, map, directionsDisplay)
         this.setState({ ...this.state, isFromFocus: false, isToFocus: false, orderMarkers: markers });
       });
@@ -234,6 +240,7 @@ class OrderPanel extends Component {
           srcLng={this.state.srcLng}
           dstLat={this.state.dstLat}
           dstLng={this.state.dstLng}
+          btnOrderClickCallback={this.btnOrderClickCallback}
         />
       </section>
     );
@@ -244,6 +251,8 @@ class OrderPanel extends Component {
       (data) => this.props.reSetToken(extractTokenFromRes(data))
     )
       .then(res => {
+        this.props.removeActiveBook();
+        this.manageBooking();
         if (onFinishCallback)
           onFinishCallback();
       });
@@ -287,7 +296,7 @@ class OrderPanel extends Component {
   componentWillUnmount = () => {
     const { trackLocationId } = this.state;
 
-    if (trackLocationId) 
+    if (trackLocationId)
       clearLocationTrack(this.state.trackLocationId);
 
     this.clearAllBookingEmitInterval();
@@ -295,13 +304,14 @@ class OrderPanel extends Component {
 
   clearAllBookingEmitInterval = () => {
     const newBookingEmitInterval = this.state.newBookingEmitInterval;
-    if(newBookingEmitInterval)
+    if (newBookingEmitInterval)
       clearInterval(newBookingEmitInterval);
   }
 
   manageBooking = () => {
     const activeBook = this.props.activeBook;
     this.clearAllBookingEmitInterval();
+    removeAllSubscriber();
     if (activeBook) {
       const setPlacesToState = () => {
         this.setState({
@@ -321,11 +331,27 @@ class OrderPanel extends Component {
       switch (activeBook.order_status_id) {
         case ORDERSTATUS.PENDING:
           const newBookingInterval = setInterval(() => {
+            console.log("Searching for driver...");
             emitNewBookingCustomer(activeBook);
           }, this.INTERVAL_NEWBOOKING);
-          this.setState({...this.state, newBookingEmitInterval: newBookingInterval}, () => setPlacesToState())
+          subscribeToNewBookingAccepted(this.props.member.id, (book) => {
+            this.props.setActiveBook(book);
+            this.manageBooking();
+            window.location.reload();
+          })
+          this.setState({ ...this.state, newBookingEmitInterval: newBookingInterval }, () => setPlacesToState())
           break;
         case ORDERSTATUS.ACCEPTED:
+          console.log("Listening for driver cancellation");
+          setPlacesToState();
+          subscribeToNewBookingDriverCancellation(this.props.member.id, (activeBook) => {
+            this.props.removeActiveBook();
+            this.manageBooking();
+          });
+          console.log("Listening for driver movement")
+          subscribeToMoveDriver(this.props.activeBook.driver_id, ({ id, lat, lng }) => {
+            this.updateCurrentDriverPosition(lat, lng);
+          })
           break;
         case ORDERSTATUS.PICKED_UP:
           break;
@@ -347,7 +373,7 @@ class OrderPanel extends Component {
         distance: undefined,
         price: undefined,
         priceWithGopay: undefined
-      })
+      }, () => this.reInitMarkers());
     }
   }
 
@@ -385,6 +411,12 @@ class OrderPanel extends Component {
     });
   }
 
+
+  btnOrderClickCallback = () => {
+    this.manageBooking();
+  }
+
+
   initMapListeners = () => {
     const { map } = this.state;
     google.maps.event.addListenerOnce(map, 'idle', () => {
@@ -404,6 +436,15 @@ class OrderPanel extends Component {
 
     createMarker(lat, lng, map, gorideCustomerMarker, "Member");
   };
+
+  updateCurrentDriverPosition = (lat, lng) => {
+    const { map } = this.state;
+    clearMarkersFromMap(this.state.driverMarkers, () => {
+      const markers = []
+      createMarker(lat, lng, map, gorideDriverMarker, "Driver", (marker) => markers.push(marker));
+      this.setState({ ...this.state, driverMarkers: markers });
+    });
+  }
 }
 
 function mapReduxStateToProps(reduxState) {
