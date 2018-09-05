@@ -32,6 +32,15 @@ export function createActiveBook(memberId, srcLat, srcLng, dstLat, dstLng, from,
     }, callback);
 }
 
+export function setDriver(id, driverId, token, callback = undefined) {
+  return apiCall('patch', `/active_books/set_driver`, {
+    id: id,
+    driver_id: driverId
+  }, {
+      'Authorization': `Bearer ${token}`
+    }, callback);
+}
+
 export function moveActiveBookToHistory(id, orderStatusId, token, callback = undefined) {
   return apiCall('patch', '/active_books/move_to_history', {
     id: id,
