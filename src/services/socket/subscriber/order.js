@@ -4,14 +4,14 @@ import { SOCKETCONFIG } from '../config'
 
 const socket = openSocket(SOCKETCONFIG.BASE_URL);
 
-function subscribeToNewBookingCustomer(driverId, callback){
+function subscribeToNewBookingCustomer(driverId, callback) {
   socket.on('newbooking:customer', activeBook => {
-    if(activeBook)
+    if (activeBook)
       callback(activeBook);
   })
 }
 
-function removeSubscribeToNewBookingCustomer(){
+function removeSubscribeToNewBookingCustomer() {
   socket.removeListener('newbooking:accepted')
 }
 
@@ -22,12 +22,44 @@ function subscribeToNewBookingAccepted(memberId, callback) {
   });
 }
 
-function removeSubscribeToNewBookingAccepted(){
+function removeSubscribeToNewBookingAccepted() {
   socket.removeListener('newbooking:accepted')
 }
 
-function removeAllSubscriber(){
+function subscribeToNewBookingMemberCancellation(driverId, callback) {
+  socket.on('newbooking:membercancellation', activeBook => {
+    if (activeBook && activeBook.driver_id && activeBook.driver_id == driverId)
+      callback(activeBook)
+  });
+}
+
+function removeSubscribeToNewBookingMemberCancellation() {
+  socket.removeListener('newbooking:membercancellation')
+}
+
+function subscribeToNewBookingDriverCancellation(memberId, callback) {
+  socket.on('newbooking:drivercancellation', activeBook => {
+    if (activeBook && activeBook.member_id && activeBook.member_id == memberId)
+      callback(activeBook)
+  });
+}
+
+function removeSubscribeToNewBookingDriverCancellation() {
+  socket.removeListener('newbooking:drivercancellation')
+}
+
+function removeAllSubscriber() {
   socket.removeAllListeners();
 }
 
-export { subscribeToNewBookingAccepted }
+export {
+  subscribeToNewBookingAccepted,
+  subscribeToNewBookingCustomer,
+  removeSubscribeToNewBookingAccepted,
+  removeSubscribeToNewBookingCustomer,
+  subscribeToNewBookingMemberCancellation,
+  subscribeToNewBookingDriverCancellation,
+  removeSubscribeToNewBookingMemberCancellation,
+  removeSubscribeToNewBookingDriverCancellation,
+  removeAllSubscriber
+}
