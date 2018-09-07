@@ -1,0 +1,21 @@
+.rotated-star{
+  transform: scaleX(-1) translateX(1px);
+  background-color: transparent; 
+  position: absolute;
+}
+
+.normal-star{
+  color: black !important;
+}
+
+.yellow-star {
+  color: #f1c40f !important;
+}
+
+.normal-star:hover{
+  color: black !important;
+}
+
+.yellow-star:hover{
+  color: yellow !important;
+}
