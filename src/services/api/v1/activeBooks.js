@@ -49,3 +49,12 @@ export function moveActiveBookToHistory(id, orderStatusId, token, callback = und
       'Authorization': `Bearer ${token}`
     }, callback)
 }
+
+export function setActiveBookStatus(id, orderStatusId, token, callback = undefined) {
+  return apiCall('patch', '/active_books/set_status', {
+    id: id,
+    order_status_id: orderStatusId
+  }, {
+      'Authorization': `Bearer ${token}`
+    }, callback)
+}
