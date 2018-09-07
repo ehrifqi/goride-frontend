@@ -44,6 +44,20 @@ function subscribeToNewBookingDriverCancellation(memberId, callback) {
   });
 }
 
+function subscribeToNewBookingPickedup(memberId, callback) {
+  socket.on('newbooking:pickedup', activeBook => {
+    if (activeBook && activeBook.member_id && activeBook.member_id == memberId)
+      callback(activeBook)
+  });
+}
+
+function subscribeToNewBookingArrived(memberId, callback) {
+  socket.on('newbooking:arrived', activeBook => {
+    if (activeBook && activeBook.member_id && activeBook.member_id === memberId)
+      callback(activeBook);
+  })
+}
+
 function removeSubscribeToNewBookingDriverCancellation() {
   socket.removeListener('newbooking:drivercancellation')
 }
@@ -61,5 +75,7 @@ export {
   subscribeToNewBookingDriverCancellation,
   removeSubscribeToNewBookingMemberCancellation,
   removeSubscribeToNewBookingDriverCancellation,
+  subscribeToNewBookingPickedup,
+  subscribeToNewBookingArrived,
   removeAllSubscriber
 }
