@@ -333,7 +333,6 @@ class OrderPanel extends Component {
       switch (activeBook.order_status_id) {
         case ORDERSTATUS.PENDING:
           const newBookingInterval = setInterval(() => {
-            console.log("Searching for driver...");
             emitNewBookingCustomer(activeBook);
           }, this.INTERVAL_NEWBOOKING);
           subscribeToNewBookingAccepted(this.props.member.id, (book) => {
@@ -344,13 +343,11 @@ class OrderPanel extends Component {
           this.setState({ ...this.state, newBookingEmitInterval: newBookingInterval }, () => setPlacesToState())
           break;
         case ORDERSTATUS.ACCEPTED:
-          console.log("Listening for driver cancellation");
           setPlacesToState();
           subscribeToNewBookingDriverCancellation(this.props.member.id, (activeBook) => {
             this.props.removeActiveBook();
             this.manageBooking();
           });
-          console.log("Listening for driver movement")
           subscribeToMoveDriver(this.props.activeBook.driver_id, ({ id, lat, lng }) => {
             this.updateCurrentDriverPosition(lat, lng);
           })
