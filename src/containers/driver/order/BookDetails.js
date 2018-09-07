@@ -67,21 +67,34 @@ class BookDetails extends Component {
               Distance: {`${activeBook.distance} km`}
             </div>
           </div>
-          {!this.state.goingToCancel &&
-            <button disabled={this.isCancelButtonDisabled()} className="ui button negative" onClick={() => this.setState({ ...this.state, goingToCancel: true })}>Cancel</button>
+          {(activeBook.order_status_id === ORDERSTATUS.PENDING || activeBook.order_status_id === ORDERSTATUS.ACCEPTED) &&
+            <React.Fragment>
+              {!this.state.goingToCancel &&
+                <React.Fragment>
+                  <button disabled={this.isCancelButtonDisabled()} className="ui button negative" onClick={() => this.setState({ ...this.state, goingToCancel: true })}>Cancel Booking</button>
+                  <button className="ui button positive" onClick={this.props.customerPickedUp}>Picked Up</button>
+                </React.Fragment>
+              }
+              {this.state.goingToCancel &&
+                <div>
+                  <h3>Are you sure you want to cancel this booking?</h3>
+                  <button className="ui button" style={{ marginRight: '10px' }} onClick={this.props.onDriverCancellation}>Yes, Cancel Order</button>
+                  <button className="ui button negative" onClick={() => this.setState({ ...this.state, goingToCancel: false })}>No, Keep Order</button>
+                </div>
+              }
+            </React.Fragment>
           }
-          {this.state.goingToCancel &&
+
+          {activeBook.order_status_id === ORDERSTATUS.PICKED_UP &&
             <div>
-              <h3>Are you sure you want to cancel this booking?</h3>
-              <button className="ui button" style={{ marginRight: '10px' }} onClick={this.props.onDriverCancellation}>Yes, Cancel Order</button>
-              <button className="ui button negative" onClick={() => this.setState({ ...this.state, goingToCancel: false })}>No, Keep Order</button>
+              <button className="ui button positive" onClick={this.props.customerArrived}>Finish</button>
             </div>
           }
         </div>
       </div>
     )
   }
-  
+
   componentDidMount() {
     if (this.props.activeBook) {
       show(this.props.activeBook.member_id, this.props.token, (data) => this.props.reSetToken(extractTokenFromRes(data)))
@@ -100,7 +113,9 @@ class BookDetails extends Component {
 }
 
 BookDetails.propTypes = {
-  onDriverCancellation: PropTypes.func.isRequired
+  onDriverCancellation: PropTypes.func.isRequired,
+  customerPickedUp: PropTypes.func.isRequired,
+  customerArrived: PropTypes.func.isRequired
 }
 
 function mapStateToProps(reduxState) {

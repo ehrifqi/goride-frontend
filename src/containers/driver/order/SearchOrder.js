@@ -13,18 +13,25 @@ import {
   mapLocation
 } from "../../../services/map";
 import { connect } from 'react-redux'
-import { getActiveBookByDriver, moveActiveBookToHistory } from '../../../services/api/v1/activeBooks';
+import { getActiveBookByDriver, moveActiveBookToHistory, setActiveBookStatus } from '../../../services/api/v1/activeBooks';
 import { ORDERSTATUS } from '../../../common/data/orderStatus'
 
 import SearchPanel from './SearchPanel';
 import BookDetails from './BookDetails';
 
-import { emitNewBookingDriverCancellation } from '../../../services/socket/emitter/order'
+import {
+  emitNewBookingDriverCancellation,
+  emitNewBookingPickedup,
+  emitNewBookingArrived
+} from '../../../services/socket/emitter/order'
 import { subscribeToNewBookingMemberCancellation } from '../../../services/socket/subscriber/order'
 
 // Redux
 import { reSetToken } from '../../../store/actions/auth'
-import { setActiveBook, removeActiveBook } from '../../../store/actions/activeBook'
+import {
+  setActiveBook,
+  removeActiveBook
+} from '../../../store/actions/activeBook'
 
 const google = window.google;
 
@@ -57,6 +64,8 @@ class SearchOrder extends Component {
         {this.props.activeBook &&
           <BookDetails
             onDriverCancellation={this.onDriverCancellation}
+            customerPickedUp={this.customerPickedUp}
+            customerArrived={this.customerArrived}
           />
         }
       </section>
@@ -82,14 +91,6 @@ class SearchOrder extends Component {
   }
 
   onDriverCancellation = (event) => {
-    // TODO: 
-    /**
-     * Update to api (move to history), status: driver cancelled, onsuccess: 
-     * remove redux active book
-     * emit newbooking:drivercancellation
-     * call ManageBooking
-     */
-
     moveActiveBookToHistory(this.props.activeBook.id, ORDERSTATUS.CANCELED_BY_DRIVER, this.props.token, (data) => {
       this.props.reSetToken(extractTokenFromRes(data))
     })
@@ -98,6 +99,28 @@ class SearchOrder extends Component {
         this.props.removeActiveBook();
         this.manageBooking();
       })
+  }
+
+  customerPickedUp = (event) => {
+    setActiveBookStatus(this.props.activeBook.id, ORDERSTATUS.PICKED_UP, this.props.token,
+      (data) => this.props.reSetToken(extractTokenFromRes(data)))
+      .then(res => {
+        this.props.setActiveBook({ ...this.props.activeBook, order_status_id: ORDERSTATUS.PICKED_UP });
+        emitNewBookingPickedup(this.props.activeBook);
+        this.forceUpdate();
+      })
+  }
+
+  customerArrived = (event) => {
+    moveActiveBookToHistory(this.props.activeBook.id, ORDERSTATUS.ARRIVED, this.props.token,
+      (data) => {
+        this.props.reSetToken(extractTokenFromRes(data));
+      })
+      .then(res => {
+        emitNewBookingArrived(this.props.activeBook);
+        this.props.removeActiveBook();
+        this.forceUpdate();
+      });
   }
 
   trackDriver = () => {

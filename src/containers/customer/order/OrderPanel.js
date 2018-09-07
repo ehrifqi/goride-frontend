@@ -33,7 +33,9 @@ import { emitNewBookingCustomer } from '../../../services/socket/emitter/order'
 import {
   subscribeToNewBookingAccepted,
   removeAllSubscriber,
-  subscribeToNewBookingDriverCancellation
+  subscribeToNewBookingDriverCancellation,
+  subscribeToNewBookingPickedup,
+  subscribeToNewBookingArrived
 } from '../../../services/socket/subscriber/order'
 import {
   subscribeToMoveDriver
@@ -186,9 +188,9 @@ class OrderPanel extends Component {
     clearMarkersFromMap(this.state.orderMarkers,
       () => {
         const markers = []
-        if (srcLat, srcLng) 
+        if (srcLat, srcLng)
           createMarker(srcLat, srcLng, map, redMarker, "Member", (marker) => markers.push(marker));
-        if(dstLat, dstLng)
+        if (dstLat, dstLng)
           createMarker(dstLat, dstLng, map, greenMarker, "Member", (marker) => markers.push(marker));
         mapLocation(srcLat, srcLng, dstLat, dstLng, map, directionsDisplay)
         this.setState({ ...this.state, isFromFocus: false, isToFocus: false, orderMarkers: markers });
@@ -352,12 +354,20 @@ class OrderPanel extends Component {
           subscribeToMoveDriver(this.props.activeBook.driver_id, ({ id, lat, lng }) => {
             this.updateCurrentDriverPosition(lat, lng);
           })
+          subscribeToNewBookingPickedup(this.props.member.id, (activeBook) => {
+            this.props.setActiveBook({ ...this.props.activeBook, order_status_id: ORDERSTATUS.PICKED_UP });
+            this.manageBooking();
+          })
           break;
         case ORDERSTATUS.PICKED_UP:
+          subscribeToNewBookingArrived(this.props.member.id, (activeBook) => {
+            this.props.setActiveBook({ ...this.props.activeBook, order_status_id: ORDERSTATUS.ARRIVED });
+            this.manageBooking();
+          });
           break;
-        case ORDERSTATUS.CANCELED_BY_DRIVER:
-          break;
-        case ORDERSTATUS.CANCELED_BY_MEMBER:
+        case ORDERSTATUS.ARRIVED:
+          this.props.removeActiveBook();
+          this.manageBooking();
           break;
       }
     }
