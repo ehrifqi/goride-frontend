@@ -1,0 +1,16 @@
+.preview {
+    margin-left: 4vw;
+}
+
+.profile-content {
+    font-size: 14px;
+    display: block;
+}
+
+.edit-field {
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom-color: #94A5A6;
+    display: block;
+}

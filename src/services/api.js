@@ -17,7 +17,7 @@ export function apiCall(method, path, data, headers=undefined, callback=undefine
   const BASE_URL = 'https://bncc-goride-api.herokuapp.com/api/v1';
   return new Promise((resolve, reject) => {
     return axios.create({
-      baseURL: 'https://bncc-goride-api.herokuapp.com/api/v1',
+      baseURL: 'http://localhost:4000/api/v1',
       headers: headers
     })[method](path, data).then(res => {
       if (res.status >= 200 && res.status < 300){

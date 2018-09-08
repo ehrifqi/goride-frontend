@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import OrderPanel from './order/OrderPanel';
 import OrderHistory from './orderHistory/OrderHistory';
 import withAuth from '../../hocs/withAuth';
+import Profile from './profile/CustomerProfile';
 
 class CustomerRoute extends Component {
   constructor(props) {
@@ -15,6 +16,7 @@ class CustomerRoute extends Component {
     return (
       <div id="router">
         <Switch>
+          <Route exact path={`${match.url}/profile`} component={withAuth(Profile)} />
           <Route exact path={`${match.url}/orderhistory`} component={withAuth(OrderHistory)} />
           <Route exact path={`${match.url}`} component={withAuth(OrderPanel)} />
         </Switch>
