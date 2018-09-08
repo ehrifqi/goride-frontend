@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import BookHistoryCard from '../../../components/cards/BookHistoryCard';
-import { getMemberBookHistories } from '../../../services/api/v1/bookHistories'
+import { getDriverBookHistories } from '../../../services/api/v1/bookHistories'
 import { connect } from 'react-redux';
 import { extractTokenFromRes } from '../../../services/api'
 import { reSetToken } from '../../../store/actions/auth'
@@ -43,7 +43,7 @@ class OrderHistory extends Component {
         {(this.state.bookHistories && this.state.bookHistories.length > 0) &&
           <BookHistoryCard
             bookHistories={this.state.bookHistories}
-            isMember={true}
+            isMember={false}
           />
         }
       </React.Fragment>
@@ -51,8 +51,8 @@ class OrderHistory extends Component {
   }
 
   componentDidMount() {
-    const { member, token } = this.props;
-    getMemberBookHistories(member.id, token, undefined,
+    const { driver, token } = this.props;
+    getDriverBookHistories(driver.id, token, undefined,
       (data) => this.props.reSetToken(extractTokenFromRes(data))
     ).then(res => {
       const { book_histories } = res;
@@ -65,7 +65,7 @@ class OrderHistory extends Component {
 
 function mapStateToProps(reduxState) {
   return {
-    member: reduxState.currentUser.user,
+    driver: reduxState.currentUser.user,
     token: reduxState.currentUser.token
   }
 }

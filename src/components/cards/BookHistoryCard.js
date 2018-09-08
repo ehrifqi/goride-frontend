@@ -16,11 +16,19 @@ class CardItem extends Component {
   mapStarsToCardItem = (id, rating, isRatingSet) => {
     return (
       <React.Fragment>
-        {isRatingSet &&
-          this.mapSetRatingStarsToCardItem(rating)
+        {this.props.isMember &&
+          <React.Fragment>
+            {isRatingSet &&
+              this.mapSetRatingStarsToCardItem(rating)
+            }
+            {!isRatingSet &&
+              this.mapUnsetRatingStarsToCardItem(id, rating)
+            }
+          </React.Fragment>
         }
-        {!isRatingSet &&
-          this.mapUnsetRatingStarsToCardItem(id, rating)
+
+        {!this.props.isMember &&
+          this.mapSetRatingStarsToCardItem(rating)
         }
       </React.Fragment>
     )
@@ -127,7 +135,8 @@ class CardItem extends Component {
 CardItem.propTypes = {
   bookHistory: PropTypes.object.isRequired,
   onStarClick: PropTypes.func.isRequired,
-  onFinalizeRatingClick: PropTypes.func.isRequired
+  onFinalizeRatingClick: PropTypes.func.isRequired,
+  isMember: PropTypes.bool.isRequired
 }
 
 
@@ -149,6 +158,7 @@ class BookHistoryCard extends Component {
           bookHistory={bookHistory}
           onStarClick={this.onStarClick}
           onFinalizeRatingClick={this.onFinalizeRatingClick}
+          isMember={this.props.isMember}
         />
       )
     })
@@ -215,7 +225,8 @@ class BookHistoryCard extends Component {
 
 
 BookHistoryCard.propTypes = {
-  bookHistories: PropTypes.array.isRequired
+  bookHistories: PropTypes.array.isRequired,
+  isMember: PropTypes.bool.isRequired
   /**
    *  {
         id
