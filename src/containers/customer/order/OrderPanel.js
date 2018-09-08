@@ -17,7 +17,7 @@ import {
   mapLocation
 } from "../../../services/map";
 import { connect } from 'react-redux'
-import { getActiveBookByMember, moveActiveBookToHistory } from '../../../services/api/v1/activeBooks';
+import { getActiveBookByMember, moveActiveBookToHistory, deleteActiveBook } from '../../../services/api/v1/activeBooks';
 import { ORDERSTATUS } from '../../../common/data/orderStatus'
 
 // Redux
@@ -249,15 +249,28 @@ class OrderPanel extends Component {
   }
 
   onOrderCancel = (orderStatusId, onFinishCallback = undefined) => {
-    moveActiveBookToHistory(this.props.activeBook.id, orderStatusId, this.props.token,
-      (data) => this.props.reSetToken(extractTokenFromRes(data))
-    )
-      .then(res => {
-        this.props.removeActiveBook();
-        this.manageBooking();
-        if (onFinishCallback)
-          onFinishCallback();
-      });
+    if (orderStatusId === ORDERSTATUS.PENDING) {
+      deleteActiveBook(this.props.activeBook.id, this.props.token,
+        (data) => this.props.reSetToken(extractTokenFromRes(data))
+      )
+        .then(res => {
+          this.props.removeActiveBook();
+          this.manageBooking();
+          if (onFinishCallback)
+            onFinishCallback();
+        })
+    }
+    else {
+      moveActiveBookToHistory(this.props.activeBook.id, orderStatusId, this.props.token,
+        (data) => this.props.reSetToken(extractTokenFromRes(data))
+      )
+        .then(res => {
+          this.props.removeActiveBook();
+          this.manageBooking();
+          if (onFinishCallback)
+            onFinishCallback();
+        });
+    }
 
     this.manageBooking();
   }
