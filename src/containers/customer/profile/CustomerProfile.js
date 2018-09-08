@@ -49,7 +49,7 @@ class Profile extends Component {
                             }
                         </div>
                         <div className="form-group preview">
-                            <label>Mobile Number</label>
+                            <label>Phone Number</label>
                             {!editing &&
                                 <label className="profile-content">{member.phone_number}</label>
                             }
