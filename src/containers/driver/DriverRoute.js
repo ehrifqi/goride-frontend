@@ -3,7 +3,7 @@ import { Switch, Route, withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import SearchOrder from './order/SearchOrder';
 import withAuth from '../../hocs/withAuth';
-import OrderHistory from '../customer/orderHistory/OrderHistory'
+import OrderHistory from './orderHistory/OrderHistory'
 import Profile from './profile/DriverProfile';
 
 class DriverRoute extends Component {

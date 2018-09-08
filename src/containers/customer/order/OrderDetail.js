@@ -5,10 +5,12 @@ import loaderGif from '../../../assets/gif/loading.gif'
 
 import { connect } from 'react-redux';
 import { apiCall, extractTokenFromRes } from '../../../services/api'
+import { reSetToken } from '../../../store/actions/auth';
 
 import { removeActiveBook } from '../../../store/actions/activeBook';
 
 import { emitNewBookingMemberCancellation } from '../../../services/socket/emitter/order'
+import { show } from '../../../services/api/v1/drivers'
 
 class OrderDetail extends Component {
   constructor(props) {
@@ -18,8 +20,8 @@ class OrderDetail extends Component {
       goingToCancel: false,
       isPickedUp: false,
       driverName: '',
-      driverPhone: ''
-
+      driverPhone: '',
+      driverLicensePlate: '',
     }
   }
 
@@ -71,7 +73,7 @@ class OrderDetail extends Component {
           <i className="user circle icon"></i>
           <div className="content">
             {this.state.driverName}
-            <div className="sub header">({this.state.driverPhone})</div>
+            <div className="sub header"><b>{this.state.driverLicensePlate}</b> - {this.state.driverPhone}</div>
           </div>
         </h2>
         <h3>{statusMessage}</h3>
@@ -165,6 +167,22 @@ class OrderDetail extends Component {
 
   componentDidMount() {
     // TODO, CALL SHOW DRIVER, SET TO STATE
+    const driverId = this.props.activeBook.driver_id
+    if (driverId) {
+      show(driverId, this.props.token,
+        (data) => this.props.reSetToken(extractTokenFromRes(data))
+      )
+      .then(data => {
+        if (data.driver) {
+          this.setState({
+            ...this.state,
+            driverName: data.driver.full_name,
+            driverPhone: data.driver.phone_number,
+            driverLicensePlate: data.driver.license_plate
+          })
+        }
+      })
+    }
   }
 }
 
@@ -176,10 +194,12 @@ OrderDetail.propTypes = {
 function mapStateToProps(reduxState) {
   return {
     activeBook: reduxState.activeBook,
-    currentUser: reduxState.currentUser
+    currentUser: reduxState.currentUser,
+    token: reduxState.currentUser.token
   }
 }
 
 export default connect(mapStateToProps, {
-  removeActiveBook
+  removeActiveBook,
+  reSetToken
 })(OrderDetail);
