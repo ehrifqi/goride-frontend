@@ -11,7 +11,8 @@ class Profile extends Component {
 
         this.state = {
             editing: false,
-            member: undefined
+            member: undefined,
+            uneditedMember: undefined
         }
     }
 
@@ -28,8 +29,15 @@ class Profile extends Component {
 
     onSaveProfile = (event) => {
         event.preventDefault();
-        const {member} = this.state;
-        // Update member (rails API)
+        const { member } = this.state;
+        // TODO: Update member (rails API)
+        
+    }
+
+    onCancelEdit = (event) => {
+        event.preventDefault();
+        const member = { ...this.state.uneditedMember }
+        this.setState({ ...this.state, editing: false, member: member });
     }
 
     render() {
@@ -71,7 +79,10 @@ class Profile extends Component {
                                 <button className={`positive ui button`} onClick={this.onEditProfile}>Edit Profile</button>
                             }
                             {editing &&
-                                <button className={`positive ui button`} onClick={this.onSaveProfile}>Save</button>
+                                <div>
+                                    <button className={`positive ui button`} onClick={this.onSaveProfile}>Save</button>
+                                    <button className={`button ui negative`} onClick={this.onCancelEdit}>Cancel</button>
+                                </div>
                             }
                         </div>
                     </div>
@@ -89,7 +100,7 @@ class Profile extends Component {
                 (data) => this.props.reSetToken(extractTokenFromRes(data)))
                 .then(res => {
                     if (res.member) {
-                        this.setState({ ...this.state, member: res.member });
+                        this.setState({ ...this.state, member: res.member, uneditedMember: res.member });
                         console.log(res.member);
                     }
                 })
