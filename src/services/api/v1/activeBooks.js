@@ -58,3 +58,9 @@ export function setActiveBookStatus(id, orderStatusId, token, callback = undefin
       'Authorization': `Bearer ${token}`
     }, callback)
 }
+
+export function deleteActiveBook(id, token, callback = undefined) {
+  return apiCall('delete', `/active_books/remove_active_book?id=${id}`, undefined, {
+      'Authorization': `Bearer ${token}`
+    }, callback)
+}
