@@ -43,19 +43,19 @@ class CardItem extends Component {
       <React.Fragment>
         <div style={{ display: 'inline-block' }}>
           <i
-            class={`star icon ${yellowOrNormalStarClass(1)}`}
+            className={`star icon ${yellowOrNormalStarClass(1)}`}
             onClick={(event) => this.props.onStarClick(event, id, 1)}></i>
           <i
-            class={`star icon ${yellowOrNormalStarClass(2)}`}
+            className={`star icon ${yellowOrNormalStarClass(2)}`}
             onClick={(event) => this.props.onStarClick(event, id, 2)}></i>
           <i
-            class={`star icon ${yellowOrNormalStarClass(3)}`}
+            className={`star icon ${yellowOrNormalStarClass(3)}`}
             onClick={(event) => this.props.onStarClick(event, id, 3)}></i>
           <i
-            class={`star icon ${yellowOrNormalStarClass(4)}`}
+            className={`star icon ${yellowOrNormalStarClass(4)}`}
             onClick={(event) => this.props.onStarClick(event, id, 4)}></i>
           <i
-            class={`star icon ${yellowOrNormalStarClass(5)}`}
+            className={`star icon ${yellowOrNormalStarClass(5)}`}
             onClick={(event) => this.props.onStarClick(event, id, 5)}></i>
         </div>
         <div style={{ display: 'inline' }}>
@@ -72,11 +72,11 @@ class CardItem extends Component {
     return (
       <React.Fragment>
         <div style={{ display: 'inline-block' }}>
-          <i class={`star icon ${yellowOrNormalStarClass(1)}`}></i>
-          <i class={`star icon ${yellowOrNormalStarClass(2)}`}></i>
-          <i class={`star icon ${yellowOrNormalStarClass(3)}`}></i>
-          <i class={`star icon ${yellowOrNormalStarClass(4)}`}></i>
-          <i class={`star icon ${yellowOrNormalStarClass(5)}`}></i>
+          <i className={`star icon ${yellowOrNormalStarClass(1)}`}></i>
+          <i className={`star icon ${yellowOrNormalStarClass(2)}`}></i>
+          <i className={`star icon ${yellowOrNormalStarClass(3)}`}></i>
+          <i className={`star icon ${yellowOrNormalStarClass(4)}`}></i>
+          <i className={`star icon ${yellowOrNormalStarClass(5)}`}></i>
         </div>
       </React.Fragment>
     )
