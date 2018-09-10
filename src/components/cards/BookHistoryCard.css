@@ -19,3 +19,13 @@
 .yellow-star:hover{
   color: yellow !important;
 }
+
+.ui.button {
+  color: white;
+  background: #4a4a4a;
+}
+
+.ui.button:hover {
+  color: white;
+  background: #5b5b5b;
+}

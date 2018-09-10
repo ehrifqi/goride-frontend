@@ -3,7 +3,7 @@
   width: 15rem;
   flex-direction: column;
   padding: 0 0 1rem 1rem;
-  border-right: 1px solid darkgray;
+  border-right: 1px solid #f8f8f8;
   font-size: .9em;
 }
 
