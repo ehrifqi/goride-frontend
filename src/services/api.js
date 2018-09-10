@@ -9,19 +9,19 @@ export function setTokenHeader(token) {
   }
 }
 
-export function extractTokenFromRes(data){
+export function extractTokenFromRes(data) {
   return data.token.access_token;
 }
 
-export function apiCall(method, path, data, headers=undefined, callback=undefined) {
-  const BASE_URL = 'https://bncc-goride-api.herokuapp.com/api/v1';
+export function apiCall(method, path, data, headers = undefined, callback = undefined) {
+  const BASE_URL = process.env.NODE_ENV === 'production' ? 'https://bncc-goride-api.herokuapp.com/api/v1' : "http://localhost:4000/api/v1";
   return new Promise((resolve, reject) => {
     return axios.create({
-      baseURL: 'http://localhost:4000/api/v1',
+      baseURL: BASE_URL,
       headers: headers
     })[method](path, data).then(res => {
-      if (res.status >= 200 && res.status < 300){
-        if(callback)
+      if (res.status >= 200 && res.status < 300) {
+        if (callback)
           callback(res.data);
         resolve(res.data);
       }
