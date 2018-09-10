@@ -76,7 +76,7 @@ class Home extends Component {
         <LandingpageHeader />
         <Banner />
         <section id="about-gojek" className="aboutus">
-          <h1 className="title--center aboutus__title">Welcome to go-ride</h1>
+          <h1 className="title--center aboutus__title">Welcome to GO-RIDE</h1>
           <div className="aboutus__panel">
             <img src={gojekAttributesImg} alt="" className="abousus__img" />
             <div className="aboutus__text-panel">

@@ -43,8 +43,8 @@
 }
 
 .aboutus__text-panel{
-  padding-left: 2.5rem;
-  padding-right: 4rem;
+  padding: 2.5rem 2.5rem 2.5rem 4rem;
+  background-color: #f8f8f8;
 }
 
 .section-btn{
