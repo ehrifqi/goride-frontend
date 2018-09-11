@@ -20,6 +20,11 @@ const driverMenus = [
     id: "menu-profile",
     displayName: "Profile",
     redirectTo: "/driver/profile"
+  },
+  {
+    id: "menu-logout",
+    displayName: "Logout",
+    redirectTo: "/driver/logout"
   }
 ]
 
@@ -46,7 +51,7 @@ class Driver extends Component {
           }}
         />
         <div style={{ display: 'flex' }}>
-          <SideMenu 
+          <SideMenu
             menus={driverMenus}
             activeId={this.state.activeId}
             setActiveId={this.setActiveId}

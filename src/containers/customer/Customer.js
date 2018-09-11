@@ -21,6 +21,12 @@ const customerMenus = [
     displayName: "Profile",
     redirectTo: "/customer/profile"
   }
+  ,
+  {
+    id: "menu-logout",
+    displayName: "Logout",
+    redirectTo: "/customer/logout"
+  }
 ]
 
 class Customer extends Component {
@@ -46,7 +52,7 @@ class Customer extends Component {
           }}
         />
         <div style={{ display: 'flex' }}>
-          <SideMenu 
+          <SideMenu
             menus={customerMenus}
             activeId={this.state.activeId}
             setActiveId={this.setActiveId}

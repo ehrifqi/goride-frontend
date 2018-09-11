@@ -5,6 +5,7 @@ import SearchOrder from './order/SearchOrder';
 import withAuth from '../../hocs/withAuth';
 import OrderHistory from './orderHistory/OrderHistory'
 import Profile from './profile/DriverProfile';
+import Logout from '../Logout'
 
 class DriverRoute extends Component {
   constructor(props) {
@@ -16,6 +17,7 @@ class DriverRoute extends Component {
     return (
       <div id="router">
         <Switch>
+          <Route exact path={`${match.url}/logout`} component={withAuth(Logout)} />
           <Route exact path={`${match.url}/orderhistory`} component={withAuth(OrderHistory)} />
           <Route exact path={`${match.url}/profile`} component={withAuth(Profile)} />
           <Route exact path={`${match.url}`} component={withAuth(SearchOrder)} />

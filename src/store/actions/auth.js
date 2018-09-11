@@ -1,4 +1,4 @@
-import { SET_CURRENT_USER, RESET_TOKEN } from "../actionTypes";
+import { SET_CURRENT_USER, RESET_TOKEN, REMOVE_CURRENT_USER } from "../actionTypes";
 import { apiCall, setTokenHeader } from "../../services/api";
 import { store } from "../index";
 
@@ -20,6 +20,12 @@ export function reSetToken(token, isAuthenticated = true) {
     token,
     isAuthenticated
   };
+}
+
+export function removeCurrentUser() {
+  return {
+    type: REMOVE_CURRENT_USER
+  }
 }
 
 export function signInMember(data) {

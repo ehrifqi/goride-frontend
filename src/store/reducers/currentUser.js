@@ -1,4 +1,4 @@
-import { SET_CURRENT_USER, RESET_TOKEN } from '../actionTypes';
+import { SET_CURRENT_USER, RESET_TOKEN, REMOVE_CURRENT_USER } from '../actionTypes';
 
 const currentUserInitialState = {
   isAuthenticated: false,
@@ -21,6 +21,11 @@ export default (state = currentUserInitialState, action) => {
         ...state,
         isAuthenticated: action.isAuthenticated,
         token: action.token
+      }
+    case REMOVE_CURRENT_USER:
+      localStorage.removeItem('token');
+      return {
+        ...currentUserInitialState
       }
     default:
       return state;
