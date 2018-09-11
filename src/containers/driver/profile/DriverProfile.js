@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { show } from '../../../services/api/v1/drivers'
 import { extractTokenFromRes } from '../../../services/api'
 import { reSetToken } from '../../../store/actions/auth';
+import { update } from '../../../services/api/v1/drivers'
 
 class Profile extends Component {
   constructor(props) {
@@ -24,6 +25,26 @@ class Profile extends Component {
   onSaveProfile = (event) => {
     event.preventDefault();
     // Update driver (rails API)
+    const { driver } = this.state
+    update({
+      id: driver.id,
+      email: driver.email,
+      fullName: driver.full_name,
+      birthdate: driver.birthdate,
+      licensePlate: driver.license_plate,
+      phoneNumber: driver.phone_number,
+      licenseNumber: driver.license_number,
+      ktpNumber: driver.ktp_number,
+      address: driver.address
+    }, this.props.token,
+      (data) => this.props.reSetToken(extractTokenFromRes(data)))
+      .then(res => {
+        const updatedDriver = { ...this.state.driver }
+        this.setState({ ...this.state, uneditedDriver: updatedDriver, driver: updatedDriver, editing: false })
+      })
+      .catch(err => {
+
+      })
   }
 
   onCancelEdit = (event) => {

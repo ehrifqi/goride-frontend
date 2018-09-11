@@ -5,3 +5,16 @@ export function show(id, token, callback = undefined) {
     'Authorization': `Bearer ${token}`
   }, callback);
 }
+
+export function update({
+  id, fullName, email, phoneNumber
+}, token, callback = undefined) {
+  return apiCall('patch', `/members/update`, {
+    id: id,
+    full_name: fullName,
+    email: email,
+    phone_number: phoneNumber
+  }, {
+      'Authorization': `Bearer ${token}`
+    }, callback)
+}
