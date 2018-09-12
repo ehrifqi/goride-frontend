@@ -43,7 +43,8 @@ class DriverRegisForm extends Component {
       address: this.state.address
     })
       .then(res => {
-
+        this.setState({ ...this.state, loading: false });
+        this.props.history.push('/driver')
       })
       .catch(err => {
         this.props.addError(err.data.message);
